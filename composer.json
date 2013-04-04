@@ -1,0 +1,21 @@
+{
+    "name": "cogipix/cogimix-common",
+    "type": "symfony-bundle",
+    "authors": [
+        {
+            "name": "Pierre-Louis FORT",
+            "email": "plfort@cogipix.com"
+        }
+    ],
+    "require": {
+       "php": ">=5.3.3",
+       "doctrine/orm": ">=2.2.3,<2.4-dev",
+       "doctrine/doctrine-bundle": "1.0.*",
+       "friendsofsymfony/user-bundle": "*"
+     
+    },
+    "autoload": {
+        "psr-0": {"Cogipix\\CogimixCommonBundle": ""}
+    },
+    "target-dir": "Cogipix/CogimixCommonBundle"
+}
