@@ -7,6 +7,9 @@
           <service id="cogimix.playlist_renderer" class="Cogipix\CogimixCommonBundle\ViewHooks\Playlist\PlaylistRendererList"></service>
           <service id="cogimix.menu_renderer" class="Cogipix\CogimixCommonBundle\ViewHooks\Menu\MenuRendererList"></service>
            <service id="cogimix.modal_renderer" class="Cogipix\CogimixCommonBundle\ViewHooks\Modal\ModalRendererList"></service>
+           
+           <service id="cogimix.jsimport_renderer" class="Cogipix\CogimixCommonBundle\ViewHooks\Javascript\JavascriptImportRendererList"></service>
+            <service id="cogimix.cssimport_renderer" class="Cogipix\CogimixCommonBundle\ViewHooks\Css\CssImportRendererList"></service>
     </services>
     
 </container>

@@ -91,5 +91,25 @@ class ServicesCompiler implements CompilerPassInterface
                     array(new Reference($id))
             );
         }
+
+        //js import view hook
+        $jsImportRendererListDefinition = $container->findDefinition('cogimix.jsimport_renderer');
+        $taggedServices = $container->findTaggedServiceIds( 'cogimix.jsimport_renderer');
+        foreach ($taggedServices as $id => $tagAttributes) {
+            $jsImportRendererListDefinition->addMethodCall(
+                    'addJavascriptImportRenderer',
+                    array(new Reference($id))
+            );
+        }
+
+        //css import view hook
+        $cssImportRendererListDefinition = $container->findDefinition('cogimix.cssimport_renderer');
+        $taggedServices = $container->findTaggedServiceIds( 'cogimix.cssimport_renderer');
+        foreach ($taggedServices as $id => $tagAttributes) {
+            $cssImportRendererListDefinition->addMethodCall(
+                    'addCssImportRenderer',
+                    array(new Reference($id))
+            );
+        }
     }
 }

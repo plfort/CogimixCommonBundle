@@ -92,7 +92,11 @@ class TrackResult
 
     public function setTitle($title)
     {
-        $this->title = $title;
+        if(empty($title)){
+            $this->title = "Unknown title";
+        }else{
+            $this->title = $title;
+        }
     }
 
     public function getEntryId()
@@ -112,7 +116,11 @@ class TrackResult
 
     public function setArtist($artist)
     {
-        $this->artist = $artist;
+        if(empty($artist)){
+            $this->artist = "Unknown artist";
+        }else{
+            $this->artist = $artist;
+        }
     }
 
     public function getThumbnails()
