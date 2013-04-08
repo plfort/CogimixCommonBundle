@@ -111,5 +111,15 @@ class ServicesCompiler implements CompilerPassInterface
                     array(new Reference($id))
             );
         }
+
+        //widget import view hook
+        $widgetRendererListDefinition = $container->findDefinition('cogimix.widget_renderer');
+        $taggedServices = $container->findTaggedServiceIds( 'cogimix.widget_renderer');
+        foreach ($taggedServices as $id => $tagAttributes) {
+            $widgetRendererListDefinition->addMethodCall(
+                    'addWidgetRenderer',
+                    array(new Reference($id))
+            );
+        }
     }
 }

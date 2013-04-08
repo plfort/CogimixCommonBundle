@@ -25,7 +25,7 @@ abstract class AbstractMusicSearch implements PluginInterface,LoggerAwareInterfa
 
     public function searchMusic(SearchQuery $search)
     {
-        $this->logger->info('Search music in '.get_class($this) );
+        $this->logger->debug('Search music in '.get_class($this) );
         $this->searchQuery = $search;
         $this->buildQuery();
         return $this->executeQuery();
