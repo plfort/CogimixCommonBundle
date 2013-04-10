@@ -22,7 +22,7 @@ class User extends BaseUser
      * Override $email so that we can apply custom validation.
      *
      * @Assert\NotBlank(groups={"CogimixRegistration"})
-     * @Assert\Length(max="5", minMessage="Email is too short", maxMessage="Email is too long", groups={"CogimixRegistration"})
+     * @Assert\Length(min="5", minMessage="Email is too short", maxMessage="Email is too long", groups={"CogimixRegistration"})
      * @Assert\Email(groups={"CogimixRegistration"})
      */
     protected $email;
