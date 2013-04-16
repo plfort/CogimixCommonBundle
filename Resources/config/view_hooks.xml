@@ -11,6 +11,7 @@
            <service id="cogimix.jsimport_renderer" class="Cogipix\CogimixCommonBundle\ViewHooks\Javascript\JavascriptImportRendererList"></service>
            <service id="cogimix.cssimport_renderer" class="Cogipix\CogimixCommonBundle\ViewHooks\Css\CssImportRendererList"></service>
            <service id="cogimix.widget_renderer" class="Cogipix\CogimixCommonBundle\ViewHooks\Widget\WidgetRendererList"></service>
+            <service id="cogimix.dot_renderer" class="Cogipix\CogimixCommonBundle\ViewHooks\DotTemplate\DotTemplateRendererList"></service>
     </services>
     
 </container>

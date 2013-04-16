@@ -121,5 +121,15 @@ class ServicesCompiler implements CompilerPassInterface
                     array(new Reference($id))
             );
         }
+
+        //dot template import view hook
+        $dotTemplateRendererListDefinition = $container->findDefinition('cogimix.dot_renderer');
+        $taggedServices = $container->findTaggedServiceIds( 'cogimix.dot_renderer');
+        foreach ($taggedServices as $id => $tagAttributes) {
+            $dotTemplateRendererListDefinition->addMethodCall(
+                    'addDotTemplateRenderer',
+                    array(new Reference($id))
+            );
+        }
     }
 }
