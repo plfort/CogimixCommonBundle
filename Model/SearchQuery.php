@@ -8,6 +8,7 @@ class SearchQuery
     protected $artistQuery;
 
     protected $songQuery;
+
     /**
      * @JMSSerializer\Exclude()
      * @var unknown_type

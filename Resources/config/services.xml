@@ -9,6 +9,9 @@
 		<service id="abstract_music_search" abstract="true"
 			class="Cogipix\CogimixCommonBundle\MusicSearch\AbstractMusicSearch">
 			<tag name="logger_aware" />
+			<call method="setCacheManager">
+				<argument type="service" id="cogimix.cache_manager" />
+			</call>
 		</service>
 		<service id="cogimix.plugin_provider"
 			class="Cogipix\CogimixCommonBundle\Plugin\PluginProvider"></service>
@@ -16,14 +19,21 @@
 		<service id="cogimix.playlist_renderer"
 			class="Cogipix\CogimixCommonBundle\ViewHooks\Playlist\PlaylistRendererList"></service>
 
+		
 		<service id="abstract_manager" abstract="true"
 			class="Cogipix\CogimixCommonBundle\Manager\AbstractManager">
 			<call method="setObjectManager">
 				<argument type="service" id="doctrine.orm.entity_manager" />
 			</call>
+
 	
 			<tag name="securitycontext_aware" />
 			<tag name="logger_aware" />
+		</service>
+		
+		
+		<service id="cogimix.cache_manager" parent="abstract_manager" class="Cogipix\CogimixCommonBundle\Manager\CacheManager">
+		    	<argument type="service" id="jms_serializer" />
 		</service>
 	</services>
 

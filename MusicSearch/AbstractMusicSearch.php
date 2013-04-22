@@ -1,5 +1,7 @@
 <?php
 namespace Cogipix\CogimixCommonBundle\MusicSearch;
+use Cogipix\CogimixCommonBundle\Manager\CacheManager;
+
 use Cogipix\CogimixCommonBundle\Plugin\PluginInterface;
 
 use Cogipix\CogimixCommonBundle\Utils\LoggerAwareInterface;
@@ -18,6 +20,11 @@ abstract class AbstractMusicSearch implements PluginInterface,LoggerAwareInterfa
      */
     protected $searchQuery;
     protected $logger;
+    /**
+     *
+     * @var CacheManager $cacheManager
+     */
+    protected $cacheManager;
 
     abstract protected function buildQuery();
     abstract protected function parseResponse($response);
@@ -27,8 +34,18 @@ abstract class AbstractMusicSearch implements PluginInterface,LoggerAwareInterfa
     {
         $this->logger->debug('Search music in '.get_class($this) );
         $this->searchQuery = $search;
-        $this->buildQuery();
-        return $this->executeQuery();
+        $resultTag = $this->getResultTag();
+        $cacheResults = $this->cacheManager->getCacheResults($search->getSongQuery(),$resultTag );
+        if(!empty($cacheResults)){
+            $this->logger->debug('Find results in cache for '.$resultTag);
+            return $cacheResults;
+        }else{
+            $this->buildQuery();
+            $results= $this->executeQuery();
+            $this->cacheManager->insertCacheResult($search->getSongQuery(), $resultTag, $results);
+            return $results;
+        }
+
     }
 
 
@@ -45,6 +62,11 @@ abstract class AbstractMusicSearch implements PluginInterface,LoggerAwareInterfa
     public function setLogger($logger){
 
         $this->logger=$logger;
+    }
+
+    public function setCacheManager($cacheManager){
+
+        $this->cacheManager=$cacheManager;
     }
 
 

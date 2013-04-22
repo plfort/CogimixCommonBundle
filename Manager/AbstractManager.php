@@ -14,7 +14,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 abstract class AbstractManager implements LoggerAwareInterface,SecurityContextAwareInterface {
     /**
      *
-     * @var DocumentManager $dm
+     * @var ObjectManager $em
      */
     protected $em;
 
