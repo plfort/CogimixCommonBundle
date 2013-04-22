@@ -35,17 +35,21 @@ abstract class AbstractMusicSearch implements PluginInterface,LoggerAwareInterfa
         $this->logger->debug('Search music in '.get_class($this) );
         $this->searchQuery = $search;
         $resultTag = $this->getResultTag();
-        $cacheResults = $this->cacheManager->getCacheResults($search->getSongQuery(),$resultTag );
-        if(!empty($cacheResults)){
-            $this->logger->debug('Find results in cache for '.$resultTag);
-            return $cacheResults;
+        if(null !=$this->cacheManager){
+            $cacheResults = $this->cacheManager->getCacheResults($search->getSongQuery(),$resultTag );
+            if(!empty($cacheResults)){
+                $this->logger->debug('Find results in cache for '.$resultTag);
+                return $cacheResults;
+            }else{
+                $this->buildQuery();
+                $results= $this->executeQuery();
+                $this->cacheManager->insertCacheResult($search->getSongQuery(), $resultTag, $results);
+                return $results;
+            }
         }else{
             $this->buildQuery();
-            $results= $this->executeQuery();
-            $this->cacheManager->insertCacheResult($search->getSongQuery(), $resultTag, $results);
-            return $results;
+            return $this->executeQuery();
         }
-
     }
 
 
