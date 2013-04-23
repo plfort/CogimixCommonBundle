@@ -31,6 +31,10 @@
 			<tag name="logger_aware" />
 		</service>
 		
+		<service id="cogimix.url_search" class="Cogipix\CogimixCommonBundle\MusicSearch\UrlSearch">
+		    	    <tag name="logger_aware" />
+		</service>
+		
 		
 		<service id="cogimix.cache_manager" parent="abstract_manager" class="Cogipix\CogimixCommonBundle\Manager\CacheManager">
 		    	<argument type="service" id="jms_serializer" />

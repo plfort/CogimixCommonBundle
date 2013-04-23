@@ -20,6 +20,7 @@ abstract class AbstractMusicSearch implements PluginInterface,LoggerAwareInterfa
      */
     protected $searchQuery;
     protected $logger;
+
     /**
      *
      * @var CacheManager $cacheManager

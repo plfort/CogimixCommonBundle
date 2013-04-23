@@ -32,11 +32,19 @@ class ServicesCompiler implements CompilerPassInterface
                 );
         }
         $taggedPluginProviders = $container->findTaggedServiceIds( 'cogimix.plugin_provider');
-
         foreach ($taggedPluginProviders as $id => $tagAttributes) {
 
             $pluginProviderDefinition->addMethodCall(
                     'addPluginProvider',
+                    array(new Reference($id))
+            );
+        }
+        $urlSearchDefinition = $container->findDefinition('cogimix.url_search');
+        $taggedUrlSearchers = $container->findTaggedServiceIds( 'cogimix.url_search');
+        foreach ($taggedUrlSearchers as $id => $tagAttributes) {
+
+            $urlSearchDefinition->addMethodCall(
+                    'addUrlSearcher',
                     array(new Reference($id))
             );
         }
@@ -49,7 +57,6 @@ class ServicesCompiler implements CompilerPassInterface
                     'setLogger',
                     array($loggerReference)
             );
-
         }
 
         $securityContextAwareServices = $container->findTaggedServiceIds('securitycontext_aware');
