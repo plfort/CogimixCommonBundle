@@ -16,7 +16,7 @@ class UrlSearch implements LoggerAwareInterface
     private $urlSearchers;
     private $logger;
 
-    public function searchByUrl($url,$crawlFallback = true)
+    public function searchByUrl($url, $crawlFallback = true)
     {
 
         try {
@@ -31,24 +31,26 @@ class UrlSearch implements LoggerAwareInterface
             if ($result == null && $crawlFallback === true) {
 
                 $result = array();
-                $html=file_get_contents($url);
-                $crawler = new Crawler($html,$url);
-                $iframeSrc=$crawler->filterXpath('//iframe')->extract(array( 'src'));
-                $embedSrc=$crawler->filterXpath('//embed')->extract(array( 'src'));
-                $aHref=$crawler->filterXpath('//a')->extract(array('href'));
-                $links = array_merge($iframeSrc,$aHref,$embedSrc);
+                $html = $this->getSiteContent($url);
+                $crawler = new Crawler($html, $url);
+                $iframeSrc = $crawler->filterXpath('//iframe')
+                        ->extract(array('src'));
+                $embedSrc = $crawler->filterXpath('//embed')
+                        ->extract(array('src'));
+                $aHref = $crawler->filterXpath('//a')->extract(array('href'));
+                $links = array_merge($iframeSrc, $aHref, $embedSrc);
                 //var_dump($links);die();
                 //$links=$crawler->filter("body a")->links();
 
-                foreach($links as $url){
+                foreach ($links as $url) {
 
-                    $subresult=$this->searchByUrl($url,false);
-                    if(null != $subresult){
-                        if(!is_array($subresult)){
-                            $subresult=array($subresult);
+                    $subresult = $this->searchByUrl($url, false);
+                    if (null != $subresult) {
+                        if (!is_array($subresult)) {
+                            $subresult = array($subresult);
                         }
 
-                        $result = array_merge($subresult,$result);
+                        $result = array_merge($subresult, $result);
                     }
                 }
                 //die();
@@ -61,6 +63,16 @@ class UrlSearch implements LoggerAwareInterface
         return array();
     }
 
+    private function getSiteContent($url)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
+    }
     public function addUrlSearcher(UrlSearcherInterface $urlSearcher)
     {
         $this->urlSearchers[] = $urlSearcher;
