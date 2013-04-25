@@ -51,7 +51,7 @@ class CacheManager extends AbstractManager{
         return null;
     }
 
-    public function insertCacheResult($query,$tag, $results,$cachePeriodMinute=30){
+    public function insertCacheResult($query,$tag, $results,$cachePeriodMinute=600){
         if(!empty($results) && is_int($cachePeriodMinute) && $cachePeriodMinute!=0){
             $expireDate= new \DateTime();
             $expireDate->add(new \DateInterval(sprintf("PT%dM",$cachePeriodMinute)));
