@@ -1,5 +1,7 @@
 <?php
 namespace Cogipix\CogimixCommonBundle\Manager;
+use Doctrine\ORM\EntityManager;
+
 use Symfony\Component\Security\Core\SecurityContextInterface;
 
 use Cogipix\CogimixCommonBundle\Utils\SecurityContextAwareInterface;
@@ -14,7 +16,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 abstract class AbstractManager implements LoggerAwareInterface,SecurityContextAwareInterface {
     /**
      *
-     * @var ObjectManager $em
+     * @var EntityManager $em
      */
     protected $em;
 
@@ -23,7 +25,7 @@ abstract class AbstractManager implements LoggerAwareInterface,SecurityContextAw
     protected $securityContext;
 
 
-    public function setObjectManager(ObjectManager $om){
+    public function setObjectManager(EntityManager $om){
         $this->em=$om;
     }
 

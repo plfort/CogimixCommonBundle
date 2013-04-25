@@ -72,17 +72,23 @@ class TrackResult
      */
     protected $icon;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @var unknown_type
+     */
+    protected $shareable = true;
 
-
-    public function __construct(){
-        $this->pluginProperties=array();
+    public function __construct()
+    {
+        $this->pluginProperties = array();
     }
     public function getId()
     {
         return $this->id;
     }
 
-    public function setId($id){
+    public function setId($id)
+    {
         $this->id = $id;
     }
     public function getTitle()
@@ -92,9 +98,9 @@ class TrackResult
 
     public function setTitle($title)
     {
-        if(empty($title)){
+        if (empty($title)) {
             $this->title = "Unknown title";
-        }else{
+        } else {
             $this->title = $title;
         }
     }
@@ -116,9 +122,9 @@ class TrackResult
 
     public function setArtist($artist)
     {
-        if(empty($artist)){
+        if (empty($artist)) {
             $this->artist = "Unknown artist";
-        }else{
+        } else {
             $this->artist = $artist;
         }
     }
@@ -178,15 +184,15 @@ class TrackResult
         return $this->pluginProperties;
     }
 
-    public function addPluginProperty($key,$value){
-        $this->pluginProperties[$key]=$value;
+    public function addPluginProperty($key, $value)
+    {
+        $this->pluginProperties[$key] = $value;
     }
 
     public function setPluginProperties($pluginProperties)
     {
         $this->pluginProperties = $pluginProperties;
     }
-
 
     public function getIcon()
     {
@@ -197,4 +203,15 @@ class TrackResult
     {
         $this->icon = $icon;
     }
+
+    public function getShareable()
+    {
+        return $this->shareable;
+    }
+
+    public function setShareable($shareable)
+    {
+        $this->shareable = $shareable;
+    }
+
 }
