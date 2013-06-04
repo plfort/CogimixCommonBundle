@@ -13,7 +13,8 @@ use Cogipix\CogimixCommonBundle\Model\SearchQuery;
  * @author plfort - Cogipix
  *
  */
-abstract class AbstractMusicSearch implements PluginInterface,LoggerAwareInterface
+abstract class AbstractMusicSearch implements PluginInterface,
+        LoggerAwareInterface
 {
     /**
      * @var SearchQuery $searchQuery
@@ -33,26 +34,28 @@ abstract class AbstractMusicSearch implements PluginInterface,LoggerAwareInterfa
 
     public function searchMusic(SearchQuery $search)
     {
-        $this->logger->debug('Search music in '.get_class($this) );
+        $this->logger->debug('Search music in ' . get_class($this));
         $this->searchQuery = $search;
         $resultTag = $this->getResultTag();
-        if(null !=$this->cacheManager){
-            $cacheResults = $this->cacheManager->getCacheResults($search->getSongQuery(),$resultTag );
-            if(!empty($cacheResults)){
-                $this->logger->debug('Find results in cache for '.$resultTag);
+        if (null != $this->cacheManager) {
+            $cacheResults = $this->cacheManager
+                    ->getCacheResults($search->getSongQuery(), $resultTag);
+            if (!empty($cacheResults)) {
+                $this->logger->debug('Find results in cache for ' . $resultTag);
                 return $cacheResults;
-            }else{
+            } else {
                 $this->buildQuery();
-                $results= $this->executeQuery();
-                $this->cacheManager->insertCacheResult($search->getSongQuery(), $resultTag, $results);
+                $results = $this->executeQuery();
+                $this->cacheManager
+                        ->insertCacheResult($search->getSongQuery(),
+                                $resultTag, $results);
                 return $results;
             }
-        }else{
+        } else {
             $this->buildQuery();
             return $this->executeQuery();
         }
     }
-
 
     public function getSearchQuery()
     {
@@ -64,14 +67,16 @@ abstract class AbstractMusicSearch implements PluginInterface,LoggerAwareInterfa
         $this->searchQuery = $searchQuery;
     }
 
-    public function setLogger($logger){
+    public function setLogger($logger)
+    {
 
-        $this->logger=$logger;
+        $this->logger = $logger;
     }
 
-    public function setCacheManager($cacheManager){
+    public function setCacheManager($cacheManager)
+    {
 
-        $this->cacheManager=$cacheManager;
+        $this->cacheManager = $cacheManager;
     }
 
 

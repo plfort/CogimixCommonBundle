@@ -3,13 +3,13 @@ namespace Cogipix\CogimixCommonBundle\Entity;
 use Cogipix\CogimixCommonBundle\Entity\TrackResult;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as JMSSerializer;
 
 /**
  *
  * @author plfort - Cogipix
- *
+ * @JMSSerializer\AccessType("public_method")
  * @ORM\Entity
  */
 class Playlist
@@ -18,8 +18,10 @@ class Playlist
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     *  @JMSSerializer\ReadOnly()
      */
-    private $id;
+    protected $id;
+
     /**
      * @ORM\Column(type="string")
      * @var unknown_type
@@ -28,10 +30,13 @@ class Playlist
     /**
      * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\TrackResult",indexBy="order", mappedBy="playlist",cascade={"persist","remove"})
      * @ORM\OrderBy({"order" = "ASC"})
+     * @JMSSerializer\Exclude()
      */
     protected $tracks;
 
-    /** @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\User", inversedBy="playlists") */
+    /** @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\User", inversedBy="playlists")
+     *  @JMSSerializer\Exclude()
+     */
     protected $user;
 
     public function __construct()
