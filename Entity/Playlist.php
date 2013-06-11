@@ -14,7 +14,7 @@ use JMS\Serializer\Annotation as JMSSerializer;
  */
 class Playlist
 {
-   /**
+    /**
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -39,9 +39,15 @@ class Playlist
      */
     protected $user;
 
+    /**
+     * @ORM\Column(type="boolean",options={"default" = false})
+     * @var unknown_type
+     */
+    protected $shared = false;
+
     public function __construct()
     {
-        $this->tracks=new ArrayCollection();
+        $this->tracks = new ArrayCollection();
     }
 
     public function getId()
@@ -69,7 +75,7 @@ class Playlist
         $this->tracks = $tracks;
     }
 
-    public function addSong(TrackResult $song,$order=null)
+    public function addSong(TrackResult $song, $order = null)
     {
 
         $song->setPlaylist($this);
@@ -91,19 +97,34 @@ class Playlist
     {
         $this->user = $user;
     }
-    public function updateTracksOrder(){
-        foreach($this->tracks as $order=>$track){
+    public function updateTracksOrder()
+    {
+        foreach ($this->tracks as $order => $track) {
             $track->setOrder($order);
         }
     }
-    public function getTrack($order){
-      if (!isset($this->tracks[$order])) {
-            throw new \InvalidArgumentException("Track not found : order : ".$order);
+    public function getTrack($order)
+    {
+        if (!isset($this->tracks[$order])) {
+            throw new \InvalidArgumentException(
+                    "Track not found : order : " . $order);
         }
         return $this->tracks[$order];
     }
 
-    public function getAlias(){
-        return 'playlist-cogimix-'.$this->id;
+    public function getAlias()
+    {
+        return 'playlist-cogimix-' . $this->id;
     }
+
+    public function getShared()
+    {
+        return $this->shared;
+    }
+
+    public function setShared($shared)
+    {
+        $this->shared = $shared;
+    }
+
 }
