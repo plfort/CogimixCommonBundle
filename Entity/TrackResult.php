@@ -7,7 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Table(name="track")
  * @JMSSerializer\AccessType("public_method")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Cogipix\CogimixCommonBundle\Repository\TrackRepository")
+ * @ORM\HasLifecycleCallbacks
  */
 class TrackResult
 {
@@ -61,7 +62,7 @@ class TrackResult
     /**
      *
      * @ORM\Column(type="array")
-     *@JMSSerializer\SerializedName("pluginProperties")
+     * @JMSSerializer\SerializedName("pluginProperties")
      * @var array $pluginProperties
      */
     protected $pluginProperties;
@@ -77,6 +78,13 @@ class TrackResult
      * @var unknown_type
      */
     protected $shareable = true;
+
+
+    /**
+     * @JMSSerializer\Exclude()
+     * @var unknown_type
+     */
+    protected $oldShareableValue = null;
 
     public function __construct()
     {
@@ -211,7 +219,57 @@ class TrackResult
 
     public function setShareable($shareable)
     {
+        $this->oldShareableValue = $this->shareable;
         $this->shareable = $shareable;
+    }
+
+    /**
+     * @ORM\PreRemove
+     */
+    public function onPreRemove()
+    {
+        if ($this->shareable == true && $this->oldShareableValue == null ) {
+            $this->playlist->decTrackCount();
+        }
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function onPrePresist()
+    {
+
+        if ($this->shareable) {
+
+            $this->playlist->incTrackCount();
+        }
+
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function onPreUpdate()
+    {
+
+        if ($this->oldShareableValue != null
+                && $this->shareable != $this->oldShareableValue) {
+            if ($this->shareable) {
+                $this->playlist->incTrackCount();
+            } else {
+                $this->playlist->decTrackCount();
+            }
+        }
+    }
+
+    public function getOldShareableValue()
+    {
+        return $this->oldShareableValue;
+    }
+
+    public function setOldShareableValue($oldShareableValue)
+    {
+        $this->oldShareableValue = $oldShareableValue;
     }
 
 }

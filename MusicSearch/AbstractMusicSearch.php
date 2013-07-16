@@ -16,6 +16,7 @@ use Cogipix\CogimixCommonBundle\Model\SearchQuery;
 abstract class AbstractMusicSearch implements PluginInterface,
         LoggerAwareInterface
 {
+    private $popularKeyword = '###popularSongs###';
     /**
      * @var SearchQuery $searchQuery
      */
@@ -31,6 +32,36 @@ abstract class AbstractMusicSearch implements PluginInterface,
     abstract protected function buildQuery();
     abstract protected function parseResponse($response);
     abstract protected function executeQuery();
+
+    protected function executePopularQuery(){
+        return array();
+    }
+
+
+
+
+    public function getPopularSongs(){
+        $this->logger->debug('Get popular music in ' . get_class($this));
+        if (null != $this->cacheManager) {
+            $resultTag = $this->getResultTag();
+            $cacheResults = $this->cacheManager
+                    ->getCacheResults($this->popularKeyword, $resultTag);
+            if (!empty($cacheResults)) {
+                $this->logger->debug('Find results in cache for ' . $resultTag);
+                return $cacheResults;
+            } else {
+
+                $results = $this->executePopularQuery();
+                $this->cacheManager
+                        ->insertCacheResult($this->popularKeyword,
+                                $resultTag, $results);
+                return $results;
+            }
+        } else {
+
+            return $this->executePopularQuery();
+        }
+    }
 
     public function searchMusic(SearchQuery $search)
     {

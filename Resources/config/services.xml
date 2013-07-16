@@ -39,6 +39,11 @@
 		<service id="cogimix.cache_manager" parent="abstract_manager" class="Cogipix\CogimixCommonBundle\Manager\CacheManager">
 		    	<argument type="service" id="jms_serializer" />
 		</service>
+		
+		         
+         <service id="cogimix.user_manager" parent="abstract_manager" class="Cogipix\CogimixCommonBundle\Manager\UserManager">	
+           
+         </service>
 	</services>
 
 

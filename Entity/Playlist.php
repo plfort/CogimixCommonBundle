@@ -10,7 +10,9 @@ use JMS\Serializer\Annotation as JMSSerializer;
  *
  * @author plfort - Cogipix
  * @JMSSerializer\AccessType("public_method")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Cogipix\CogimixCommonBundle\Repository\PlaylistRepository")
+ * @ORM\HasLifecycleCallbacks
+ * @JMSSerializer\ExclusionPolicy("all")
  */
 class Playlist
 {
@@ -18,15 +20,26 @@ class Playlist
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     *  @JMSSerializer\ReadOnly()
+     * @JMSSerializer\ReadOnly()
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"playlist_list"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string")
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"playlist_list"})
      * @var unknown_type
      */
     protected $name;
+
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     * @var unknown_type
+     */
+    protected $shortDescription;
+
     /**
      * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\TrackResult",indexBy="order", mappedBy="playlist",cascade={"persist","remove"})
      * @ORM\OrderBy({"order" = "ASC"})
@@ -34,8 +47,10 @@ class Playlist
      */
     protected $tracks;
 
-    /** @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\User", inversedBy="playlists")
-     *  @JMSSerializer\Exclude()
+    /**
+     * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\User", inversedBy="playlists")
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"user_minimal"})
      */
     protected $user;
 
@@ -44,6 +59,35 @@ class Playlist
      * @var unknown_type
      */
     protected $shared = false;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"playlist_list"})
+     * @var unknown_type
+     */
+    protected $trackCount = 0;
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     * @var unknown_type
+     */
+    protected $createDate;
+
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     * @var unknown_type
+     */
+    protected $updateDate;
+    /**
+     *
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\ReadOnly()
+     * @JMSSerializer\Accessor(getter="getWebPicture")
+     * @JMSSerializer\Groups({"playlist_list"})
+     * @var unknown_type
+     */
+    protected $webPicture;
+
 
     public function __construct()
     {
@@ -79,8 +123,8 @@ class Playlist
     {
 
         $song->setPlaylist($this);
-
         $this->tracks->add($song);
+
     }
 
     public function removeSong($id)
@@ -127,4 +171,90 @@ class Playlist
         $this->shared = $shared;
     }
 
+    public function incTrackCount()
+    {
+        $this->trackCount++;
+    }
+
+    public function decTrackCount()
+    {
+        if ($this->trackCount > 0) {
+            $this->trackCount--;
+        }
+    }
+
+    /**
+     * @ORM\PreRemove
+     */
+    public function onPreRemove()
+    {
+        $this->user->decPlaylistCount();
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function onPrePresist()
+    {
+        $this->createDate = new \DateTime();
+        $this->updateDate = $this->createDate;
+        $this->user->incPlaylistCount();
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function onPreUpdate()
+    {
+
+        $this->updateDate=new \DateTime();
+    }
+
+    public function getTrackCount()
+    {
+        return $this->trackCount;
+    }
+
+    public function setTrackCount($trackCount)
+    {
+        $this->trackCount = $trackCount;
+    }
+
+    public function getShortDescription()
+    {
+        return $this->shortDescription;
+    }
+
+    public function setShortDescription($shortDescription)
+    {
+        $this->shortDescription = $shortDescription;
+    }
+
+    public function getCreateDate()
+    {
+        return $this->createDate;
+    }
+
+    public function setCreateDate($createDate)
+    {
+        $this->createDate = $createDate;
+    }
+
+    public function getUpdateDate()
+    {
+        return $this->updateDate;
+    }
+
+    public function setUpdateDate($updateDate)
+    {
+        $this->updateDate = $updateDate;
+    }
+
+
+    public function getWebPicture(){
+        if($this->user == null ){
+            return UserPicture::getDefaultImage();
+        }
+        return $this->user->getWebPicture();
+    }
 }
