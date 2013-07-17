@@ -10,8 +10,8 @@
     "require": {
        "php": ">=5.3.3",
        "doctrine/orm": ">=2.2.3,<2.4-dev",
-       "doctrine/doctrine-bundle": "1.0.*",
-       "friendsofsymfony/user-bundle": "*"
+       "doctrine/doctrine-bundle": "1.2.*",
+       "friendsofsymfony/user-bundle": "dev-master"
      
     },
     "autoload": {
