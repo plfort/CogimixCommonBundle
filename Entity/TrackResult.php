@@ -252,14 +252,14 @@ class TrackResult
     public function onPreUpdate()
     {
 
-        if ($this->oldShareableValue != null
+        /*if ($this->oldShareableValue != null
                 && $this->shareable != $this->oldShareableValue) {
             if ($this->shareable) {
                 $this->playlist->incTrackCount();
             } else {
                 $this->playlist->decTrackCount();
             }
-        }
+        }*/
     }
 
     public function getOldShareableValue()

@@ -11,6 +11,8 @@ class TrackFromUser extends TrackResult
 
     protected $sid;
 
+    protected $readed;
+
     public function getUid()
     {
         return $this->uid;
@@ -39,6 +41,16 @@ class TrackFromUser extends TrackResult
     public function setSid($sid)
     {
         $this->sid = $sid;
+    }
+
+    public function getReaded()
+    {
+        return $this->readed;
+    }
+
+    public function setReaded($readed)
+    {
+        $this->readed = $readed;
     }
 
 }

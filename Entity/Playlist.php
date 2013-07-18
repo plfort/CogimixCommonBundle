@@ -88,10 +88,16 @@ class Playlist
      */
     protected $webPicture;
 
+    /**
+     * @JMSSerializer\Exclude()
+     * @var unknown_type
+     */
+    protected $oldSharedValue = null;
 
     public function __construct()
     {
         $this->tracks = new ArrayCollection();
+        $this->oldSharedValue = $this->shared;
     }
 
     public function getId()
@@ -168,6 +174,7 @@ class Playlist
 
     public function setShared($shared)
     {
+        $this->oldSharedValue = $this->shared;
         $this->shared = $shared;
     }
 
@@ -188,7 +195,9 @@ class Playlist
      */
     public function onPreRemove()
     {
-        $this->user->decPlaylistCount();
+        if ($this->shared == true && $this->oldSharedValue == true) {
+            $this->user->decPlaylistCount();
+        }
     }
 
     /**
@@ -198,16 +207,22 @@ class Playlist
     {
         $this->createDate = new \DateTime();
         $this->updateDate = $this->createDate;
-        $this->user->incPlaylistCount();
+        if ($this->shared == true) {
+            $this->user->incPlaylistCount();
+        }
+
     }
 
     /**
      * @ORM\PreUpdate
+     *
      */
     public function onPreUpdate()
     {
+        $this->updateDate = new \DateTime();
 
-        $this->updateDate=new \DateTime();
+
+
     }
 
     public function getTrackCount()
@@ -250,11 +265,24 @@ class Playlist
         $this->updateDate = $updateDate;
     }
 
-
-    public function getWebPicture(){
-        if($this->user == null ){
+    public function getWebPicture()
+    {
+        if ($this->user == null) {
             return UserPicture::getDefaultImage();
         }
         return $this->user->getWebPicture();
     }
+
+    public function getOldSharedValue()
+    {
+        return $this->oldSharedValue;
+    }
+
+    public function setOldSharedValue($oldSharedValue)
+    {
+        $this->oldSharedValue = $oldSharedValue;
+    }
+
+
+
 }
