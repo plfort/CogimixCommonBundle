@@ -29,8 +29,9 @@ class User extends BaseUser
     /**
      * Override $user so that we can apply custom validation.
      *
-     * @Assert\NotBlank(groups={"CogimixRegistration"})
-     * @Assert\Length(min="4", max="25",minMessage="Username is too short", maxMessage="Username is too long", groups={"CogimixRegistration"})
+     * @Assert\NotBlank(groups={"Registration","Profile"})
+     * @Assert\Length(min=4, max=25,minMessage="Username is too short", maxMessage="Username is too long", groups={"Registration","Profile"})
+     * @Assert\Regex(pattern="/^\w*$/",message="error_alphanum", groups={"Registration","Profile"})
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"user_info","user_minimal"})
      */
@@ -39,9 +40,9 @@ class User extends BaseUser
     /**
      * Override $email so that we can apply custom validation.
      *
-     * @Assert\NotBlank(groups={"CogimixRegistration"})
-     * @Assert\Length(min="5", minMessage="Email is too short", maxMessage="Email is too long", groups={"CogimixRegistration"})
-     * @Assert\Email(groups={"CogimixRegistration"})
+     * @Assert\NotBlank(groups={"Registration"})
+     * @Assert\Length(min="5", minMessage="Email is too short", maxMessage="Email is too long", groups={"Registration"})
+     * @Assert\Email(groups={"Registration","Profile"})
      * @JMSSerializer\Exclude()
      */
     protected $email;
