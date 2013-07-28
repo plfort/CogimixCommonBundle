@@ -1,11 +1,13 @@
 <?php
+
+
 namespace Cogipix\CogimixCommonBundle\Repository;
 
 
 use Doctrine\ORM\Query\Expr\Join;
 
 use Doctrine\ORM\EntityRepository;
-
+use Doctrine\ORM\NoResultException;
 
 /**
  *
@@ -29,7 +31,7 @@ class UserRepository extends EntityRepository{
         $query->useQueryCache(true);
         try{
             return $query->getSingleResult();
-        }catch(\NoResultException $ex){
+        }catch(NoResultException $ex){
             return null;
         }
     }

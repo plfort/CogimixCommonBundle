@@ -30,7 +30,7 @@ class User extends BaseUser
      * Override $user so that we can apply custom validation.
      *
      * @Assert\NotBlank(groups={"Registration","Profile"})
-     * @Assert\Length(min=4, max=25,minMessage="Username is too short", maxMessage="Username is too long", groups={"Registration","Profile"})
+     * @Assert\Length(min=4, max=20,minMessage="Username is too short", maxMessage="Username is too long", groups={"Registration","Profile"})
      * @Assert\Regex(pattern="/^\w*$/",message="error_alphanum", groups={"Registration","Profile"})
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"user_info","user_minimal"})
@@ -52,6 +52,13 @@ class User extends BaseUser
      * @JMSSerializer\Groups({"user_playlists"})
      */
     protected $playlists;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Playlist",inversedBy="fans",indexBy="id")
+     * @ORM\JoinTable(name="fans_playlists")
+     * @JMSSerializer\Groups({"user_favorite_playlists"})
+     */
+    protected $favoritePlaylists;
 
     /**
      * @ORM\Column(type="integer");
@@ -92,12 +99,12 @@ class User extends BaseUser
     {
         parent::__construct();
         $this->playlists = new ArrayCollection();
+        $this->favoritePlaylists = new ArrayCollection();
         $this->myListenings = new ArrayCollection();
         $this->listeners = new ArrayCollection();
-        $this->picture= new UserPicture();
+        $this->picture = new UserPicture();
         // your own logic
     }
-
 
     public function getId()
     {
@@ -176,21 +183,47 @@ class User extends BaseUser
         $this->playlistCount = $playlistCount;
     }
 
-    public function incPlaylistCount(){
+    public function incPlaylistCount()
+    {
         $this->playlistCount++;
     }
 
-    public function decPlaylistCount(){
-        if( $this->playlistCount>0){
+    public function decPlaylistCount()
+    {
+        if ($this->playlistCount > 0) {
             $this->playlistCount--;
         }
     }
 
-    public function getWebPicture(){
-        if($this->picture == null){
+    public function getWebPicture()
+    {
+        if ($this->picture == null) {
             return UserPicture::getDefaultImage();
         }
         return $this->picture->getWebPath();
+    }
+
+    public function getFavoritePlaylists()
+    {
+        return $this->favoritePlaylists;
+    }
+
+    public function setFavoritePlaylists($favoritePlaylists)
+    {
+        $this->favoritePlaylists = $favoritePlaylists;
+    }
+
+    public function addFavoritePlaylist($favoritePlaylist)
+    {
+        $favoritePlaylist->addFan($this);
+        $this->favoritePlaylists[$favoritePlaylist->getId()] = $favoritePlaylist;
+    }
+
+    public function removeFavoritePlaylist($favoritePlaylist){
+        if($this->favoritePlaylists->containsKey($favoritePlaylist->getId())){
+            $favoritePlaylist->removeFan($this);
+            $this->favoritePlaylists->remove($favoritePlaylist->getId());
+        }
     }
 
 }

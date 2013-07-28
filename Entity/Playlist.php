@@ -1,7 +1,9 @@
 <?php
 namespace Cogipix\CogimixCommonBundle\Entity;
-use Cogipix\CogimixCommonBundle\Entity\TrackResult;
+use Cogipix\CogimixCommonBundle\Model\PlaylistConstant;
 
+use Cogipix\CogimixCommonBundle\Entity\TrackResult;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMSSerializer;
@@ -16,6 +18,7 @@ use JMS\Serializer\Annotation as JMSSerializer;
  */
 class Playlist
 {
+
     /**
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
@@ -30,6 +33,7 @@ class Playlist
      * @ORM\Column(type="string")
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"playlist_list"})
+     * @Assert\Length(min=2, max=20,minMessage="playlist_name_too_short", maxMessage="playlist_name_too_long", groups={"Create","Edit"})
      * @var unknown_type
      */
     protected $name;
@@ -55,7 +59,7 @@ class Playlist
     protected $user;
 
     /**
-     * @ORM\Column(type="boolean",options={"default" = false})
+     * @ORM\Column(type="integer",options={"default" = 0})
      * @var unknown_type
      */
     protected $shared = false;
@@ -94,9 +98,23 @@ class Playlist
      */
     protected $oldSharedValue = null;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="favoritePlaylists",indexBy="id")
+     **/
+    private $fans;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"playlist_list"})
+     * @var unknown_type
+     */
+    protected $fanCount = 0;
+
     public function __construct()
     {
         $this->tracks = new ArrayCollection();
+        $this->fans = new ArrayCollection();
         $this->oldSharedValue = $this->shared;
     }
 
@@ -174,7 +192,7 @@ class Playlist
 
     public function setShared($shared)
     {
-        $this->oldSharedValue = $this->shared;
+       // $this->oldSharedValue = $this->shared;
         $this->shared = $shared;
     }
 
@@ -195,7 +213,7 @@ class Playlist
      */
     public function onPreRemove()
     {
-        if ($this->shared == true && $this->oldSharedValue == true) {
+        if ($this->shared > PlaylistConstant::$NOT_SHARED) {
             $this->user->decPlaylistCount();
         }
     }
@@ -207,7 +225,7 @@ class Playlist
     {
         $this->createDate = new \DateTime();
         $this->updateDate = $this->createDate;
-        if ($this->shared == true) {
+        if ($this->shared > PlaylistConstant::$NOT_SHARED) {
             $this->user->incPlaylistCount();
         }
 
@@ -220,8 +238,6 @@ class Playlist
     public function onPreUpdate()
     {
         $this->updateDate = new \DateTime();
-
-
 
     }
 
@@ -283,6 +299,50 @@ class Playlist
         $this->oldSharedValue = $oldSharedValue;
     }
 
+    public function getFans()
+    {
+        return $this->fans;
+    }
 
+    public function setFans($fans)
+    {
+        $this->fans = $fans;
+    }
+
+    public function addFan($fan)
+    {
+        $this->fans[$fan->getId()] = $fan;
+        $this->incFanCount();
+    }
+
+    public function removeFan($fan)
+    {
+        if ($this->fans->containsKey($fan->getId())) {
+            $this->fans->remove($fan->getId());
+            $this->decFanCount();
+        }
+    }
+
+    public function getFanCount()
+    {
+        return $this->fanCount;
+    }
+
+    public function setFanCount($fanCount)
+    {
+        $this->fanCount = $fanCount;
+    }
+
+    public function incFanCount()
+    {
+        $this->fanCount++;
+    }
+
+    public function decFanCount()
+    {
+        if ($this->fanCount > 0) {
+            $this->fanCount--;
+        }
+    }
 
 }
