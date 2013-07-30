@@ -33,7 +33,7 @@ class PlaylistRepository extends EntityRepository{
     public function getSharedPlaylist($playlistId,$currentUser){
 
         $qb= $this->createQueryBuilder('p');
-        $qb->select('p','u');
+        $qb->select('distinct p,u');
         $qb->join('p.user','u');
         $qb->leftJoin('u.listeners','ml');
         $qb->where('p.id = :id AND (u = :currentUser OR p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1))');
@@ -54,7 +54,8 @@ class PlaylistRepository extends EntityRepository{
 
     public function searchByName($currentUser,$name,$limit=30,$listenrId=null){
        $qb= $this->createQueryBuilder('p');
-       $qb->select('p','u');
+       $qb->select('distinct p,u');
+
        $qb->join('p.user','u');
        $qb->leftJoin('u.listeners','ml');
        $qb->where('(p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1)) AND (p.name like :name) AND p.trackCount > 0');
@@ -73,7 +74,6 @@ class PlaylistRepository extends EntityRepository{
 
        $qb->orderBy('p.name','ASC');
        $query=$qb->getQuery();
-       //echo $query->getSQL();die();
        $query->useQueryCache(true);
        return $query->getResult();
     }
