@@ -33,6 +33,7 @@ class Playlist
      * @ORM\Column(type="string")
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"playlist_list"})
+     * @Assert\NotBlank( groups={"Create","Edit"});
      * @Assert\Length(min=2, max=20,minMessage="playlist_name_too_short", maxMessage="playlist_name_too_long", groups={"Create","Edit"})
      * @var unknown_type
      */
@@ -60,9 +61,12 @@ class Playlist
 
     /**
      * @ORM\Column(type="integer",options={"default" = 0})
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"playlist_list"})
+     * @Assert\Choice(choices = {0,1,2}, groups={"Create","Edit"})
      * @var unknown_type
      */
-    protected $shared = false;
+    protected $shared = 0;
 
     /**
      * @ORM\Column(type="integer")
