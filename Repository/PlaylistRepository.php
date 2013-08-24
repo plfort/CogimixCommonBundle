@@ -72,7 +72,9 @@ class PlaylistRepository extends EntityRepository{
            $qb->setMaxResults($limit);
        }
 
-       $qb->orderBy('p.name','ASC');
+       $qb->addOrderBy('p.fanCount','DESC');
+       $qb->addOrderBy('p.updateDate','DESC');
+
        $query=$qb->getQuery();
        $query->useQueryCache(true);
        return $query->getResult();
