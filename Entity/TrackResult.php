@@ -68,7 +68,8 @@ class TrackResult
     protected $pluginProperties;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string",nullable=true)
+     * @JMSSerializer\Exclude()
      * @var unknown_type
      */
     protected $icon;
@@ -189,6 +190,9 @@ class TrackResult
 
     public function getPluginProperties()
     {
+        if(count($this->pluginProperties) ==0 ){
+            return null;
+        }
         return $this->pluginProperties;
     }
 
@@ -199,7 +203,10 @@ class TrackResult
 
     public function setPluginProperties($pluginProperties)
     {
-        $this->pluginProperties = $pluginProperties;
+        if(is_array($pluginProperties)){
+            $this->pluginProperties = $pluginProperties;
+        }
+
     }
 
     public function getIcon()
