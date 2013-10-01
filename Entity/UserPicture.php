@@ -14,7 +14,7 @@ use JMS\Serializer\Annotation as JMSSerializer;
  */
 class UserPicture
 {
-    private static $DEFAULT_IMG = 'bundles/cogimix/images/mini_logo_166.png';
+    private static $DEFAULT_IMG = '/bundles/cogimix/images/mini_logo_166.png';
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
