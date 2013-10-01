@@ -32,7 +32,7 @@ class Playlist
     /**
      * @ORM\Column(type="string")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"playlist_list"})
+     * @JMSSerializer\Groups({"playlist_list","export"})
      * @Assert\NotBlank( groups={"Create","Edit"});
      * @Assert\Length(min=2, max=20,minMessage="playlist_name_too_short", maxMessage="playlist_name_too_long", groups={"Create","Edit"})
      * @var unknown_type
@@ -46,9 +46,11 @@ class Playlist
     protected $shortDescription;
 
     /**
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"export"})
      * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\TrackResult",indexBy="order", mappedBy="playlist",cascade={"persist","remove"})
      * @ORM\OrderBy({"order" = "ASC"})
-     * @JMSSerializer\Exclude()
+     * @var array
      */
     protected $tracks;
 
@@ -71,18 +73,22 @@ class Playlist
     /**
      * @ORM\Column(type="integer")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"playlist_list"})
+     * @JMSSerializer\Groups({"playlist_list","export"})
      * @var unknown_type
      */
     protected $trackCount = 0;
     /**
      * @ORM\Column(type="datetime",nullable=true)
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"export"})
      * @var unknown_type
      */
     protected $createDate;
 
     /**
      * @ORM\Column(type="datetime",nullable=true)
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"export"})
      * @var unknown_type
      */
     protected $updateDate;

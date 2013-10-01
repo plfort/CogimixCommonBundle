@@ -22,16 +22,19 @@ class TrackResult
 
     /**
      * @ORM\Column( name="trackOrder",type="integer", nullable=false)
+     * @JMSSerializer\Groups({"export"})
      */
     protected $order;
 
     /**
      * @ORM\Column(type="string")
+     * @JMSSerializer\Groups({"export"})
      * @var unknown_type
      */
     protected $title;
     /**
      * @ORM\Column(type="string")
+     * @JMSSerializer\Groups({"export"})
      * @var unknown_type
      */
     protected $artist = '';
@@ -43,6 +46,7 @@ class TrackResult
     protected $entryId;
     /**
      * @ORM\Column(type="string")
+     * @JMSSerializer\Groups({"export"})
      * @var unknown_type
      */
     protected $thumbnails;
@@ -55,6 +59,7 @@ class TrackResult
     protected $playlist;
     /**
      * @ORM\Column(type="string")
+     * @JMSSerializer\Groups({"export"})
      * @var unknown_type
      */
     protected $tag;
