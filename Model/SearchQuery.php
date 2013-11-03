@@ -5,7 +5,7 @@ use JMS\Serializer\Annotation as JMSSerializer;
 class SearchQuery
 {
 
-    protected $artistQuery;
+    protected $artistQuery='';
 
     protected $songQuery;
 
@@ -15,7 +15,7 @@ class SearchQuery
      */
     protected $services;
 
-    public function __construct($songQuery = null, $artistQuery = null)
+    public function __construct($songQuery = null, $artistQuery = '')
     {
         $this->songQuery = $songQuery;
         $this->artistQuery = $artistQuery;
@@ -52,8 +52,10 @@ class SearchQuery
     }
 
     public function __toString(){
-        return $this->songQuery.' '.$this->artistQuery;
+        return trim($this->artistQuery.' '.$this->songQuery);
     }
+
+
 
 }
 ?>

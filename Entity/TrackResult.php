@@ -272,4 +272,7 @@ class TrackResult
         $this->oldShareableValue = $oldShareableValue;
     }
 
+    public function __toString(){
+    	return trim($this->artist).' '.$this->title;
+    }
 }

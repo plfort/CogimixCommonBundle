@@ -13,6 +13,7 @@
 				<argument type="service" id="cogimix.cache_manager" />
 			</call>
 		</service>
+		
 		<service id="cogimix.plugin_provider"
 			class="Cogipix\CogimixCommonBundle\Plugin\PluginProvider"></service>
 
