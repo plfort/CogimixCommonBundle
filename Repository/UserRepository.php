@@ -1,11 +1,13 @@
 <?php
+
+
 namespace Cogipix\CogimixCommonBundle\Repository;
 
 
 use Doctrine\ORM\Query\Expr\Join;
 
 use Doctrine\ORM\EntityRepository;
-
+use Doctrine\ORM\NoResultException;
 
 /**
  *
@@ -13,6 +15,7 @@ use Doctrine\ORM\EntityRepository;
  *
  */
 class UserRepository extends EntityRepository{
+
 
 
     public function getUserDetails($currentUser,$id){
@@ -26,14 +29,18 @@ class UserRepository extends EntityRepository{
         $qb->setParameter('userId', $id);
         $query=$qb->getQuery();
         $query->useQueryCache(true);
-        return $query->getSingleResult();
+        try{
+            return $query->getSingleResult();
+        }catch(NoResultException $ex){
+            return null;
+        }
     }
 
     public function findByUsernameLike($currentUser,$username){
        $qb= $this->createQueryBuilder('u');
        $qb->select('u');
        $qb->addSelect('(CASE WHEN u IN (SELECT IDENTITY(ml.toUser) FROM CogimixCommonBundle:Listener ml WHERE ml.fromUser = :user) THEN 1 ELSE 0 END) as added');
-       $qb->where($qb->expr()->like('u.username',$qb->expr()->literal('%'.$username.'%')));
+       $qb->where($qb->expr()->like('u.username',$qb->expr()->literal($username.'%')));
        $qb->andWhere('u.id != :user');
        $qb->leftJoin('u.listeners','l',Join::WITH,'l.fromUser = :user');
        $qb->andWhere('l IS NULL OR l.accepted = 1');

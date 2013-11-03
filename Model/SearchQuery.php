@@ -52,7 +52,9 @@ class SearchQuery
     }
 
     public function __toString(){
+
         return trim($this->artistQuery.' '.$this->songQuery);
+
     }
 
 

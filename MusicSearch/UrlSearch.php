@@ -15,51 +15,60 @@ class UrlSearch implements LoggerAwareInterface
 
     private $urlSearchers;
     private $logger;
+    private $crawledUrls = array();
 
     public function searchByUrl($url, $crawlFallback = true)
     {
+        if (!in_array($url, $this->crawledUrls)) {
 
-        try {
+            try {
 
-            $parsedUrl = new ParsedUrl($url);
-            $result = null;
-            foreach ($this->urlSearchers as $urlSearcher) {
-                if (($result = $urlSearcher->searchByUrl($parsedUrl)) !== null) {
-                    return $result;
-                }
-            }
-            if ($result == null && $crawlFallback === true) {
-
-                $result = array();
-                $html = $this->getSiteContent($url);
-                $crawler = new Crawler($html, $url);
-                $iframeSrc = $crawler->filterXpath('//iframe')
-                        ->extract(array('src'));
-                $embedSrc = $crawler->filterXpath('//embed')
-                        ->extract(array('src'));
-                $aHref = $crawler->filterXpath('//a')->extract(array('href'));
-                $links = array_merge($iframeSrc, $aHref, $embedSrc);
-                //var_dump($links);die();
-                //$links=$crawler->filter("body a")->links();
-
-                foreach ($links as $url) {
-
-                    $subresult = $this->searchByUrl($url, false);
-                    if (null != $subresult) {
-                        if (!is_array($subresult)) {
-                            $subresult = array($subresult);
-                        }
-
-                        $result = array_merge($subresult, $result);
+                $parsedUrl = new ParsedUrl($url);
+                $result = null;
+                foreach ($this->urlSearchers as $urlSearcher) {
+                    if (($result = $urlSearcher->searchByUrl($parsedUrl))
+                            !== null) {
+                        return $result;
                     }
                 }
-                //die();
-                return $result;
-            }
-        } catch (\Exception $ex) {
-            $this->logger->err($ex->getMessage());
-        }
+                if ($result == null && $crawlFallback === true) {
 
+                    $result = array();
+                    $html = $this->getSiteContent($url);
+                    $crawler = new Crawler($html, $url);
+                    $iframeSrc = $crawler->filterXpath('//iframe')
+                            ->extract(array('src'));
+                    $embedSrc = $crawler->filterXpath('//embed')
+                            ->extract(array('src'));
+                    $aHref = $crawler->filterXpath('//a')
+                            ->extract(array('href'));
+                    $links = array_merge($iframeSrc, $aHref, $embedSrc);
+
+
+                    foreach ($links as $url) {
+
+                        if (strlen($url) > 1 && strpos($url, '/') === 0) {
+                            $url = $parsedUrl->host . $url;
+                        }
+
+                        $subresult = $this->searchByUrl($url, false);
+
+                        if (null != $subresult) {
+                            if (!is_array($subresult)) {
+                                $subresult = array($subresult);
+                            }
+
+                            $result = array_merge($subresult, $result);
+                        }
+                        $this->crawledUrls[] = $url;
+                    }
+
+                    return $result;
+                }
+            } catch (\Exception $ex) {
+                $this->logger->err($ex->getMessage());
+            }
+        }
         return array();
     }
 

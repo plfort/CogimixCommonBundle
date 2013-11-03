@@ -31,13 +31,17 @@ class Suggestion
      */
     protected $suggestedItem;
 
-
     /**
      * @ORM\Column(type="datetime")
      * @var unknown_type
      */
 
     protected $createDate;
+    /**
+     * @ORM\Column(type="boolean")
+     * @var unknown_type
+     */
+    protected $readed = false;
 
     public function getId()
     {
@@ -76,6 +80,26 @@ class Suggestion
     {
         $this->createDate = new \DateTime();
 
+    }
+
+    public function getCreateDate()
+    {
+        return $this->createDate;
+    }
+
+    public function setCreateDate($createDate)
+    {
+        $this->createDate = $createDate;
+    }
+
+    public function getReaded()
+    {
+        return $this->readed;
+    }
+
+    public function setReaded($readed)
+    {
+        $this->readed = $readed;
     }
 
 }

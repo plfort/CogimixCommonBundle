@@ -22,16 +22,19 @@ class TrackResult
 
     /**
      * @ORM\Column( name="trackOrder",type="integer", nullable=false)
+     * @JMSSerializer\Groups({"export"})
      */
     protected $order;
 
     /**
      * @ORM\Column(type="string")
+     * @JMSSerializer\Groups({"export"})
      * @var unknown_type
      */
     protected $title;
     /**
      * @ORM\Column(type="string")
+     * @JMSSerializer\Groups({"export"})
      * @var unknown_type
      */
     protected $artist = '';
@@ -43,6 +46,7 @@ class TrackResult
     protected $entryId;
     /**
      * @ORM\Column(type="string")
+     * @JMSSerializer\Groups({"export"})
      * @var unknown_type
      */
     protected $thumbnails;
@@ -55,6 +59,7 @@ class TrackResult
     protected $playlist;
     /**
      * @ORM\Column(type="string")
+     * @JMSSerializer\Groups({"export"})
      * @var unknown_type
      */
     protected $tag;
@@ -68,7 +73,8 @@ class TrackResult
     protected $pluginProperties;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string",nullable=true)
+     * @JMSSerializer\Exclude()
      * @var unknown_type
      */
     protected $icon;
@@ -189,6 +195,9 @@ class TrackResult
 
     public function getPluginProperties()
     {
+        if(count($this->pluginProperties) ==0 ){
+            return null;
+        }
         return $this->pluginProperties;
     }
 
@@ -199,7 +208,10 @@ class TrackResult
 
     public function setPluginProperties($pluginProperties)
     {
-        $this->pluginProperties = $pluginProperties;
+        if(is_array($pluginProperties)){
+            $this->pluginProperties = $pluginProperties;
+        }
+
     }
 
     public function getIcon()
@@ -252,14 +264,14 @@ class TrackResult
     public function onPreUpdate()
     {
 
-        if ($this->oldShareableValue != null
+        /*if ($this->oldShareableValue != null
                 && $this->shareable != $this->oldShareableValue) {
             if ($this->shareable) {
                 $this->playlist->incTrackCount();
             } else {
                 $this->playlist->decTrackCount();
             }
-        }
+        }*/
     }
 
     public function getOldShareableValue()

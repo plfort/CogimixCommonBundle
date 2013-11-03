@@ -1,7 +1,9 @@
 <?php
 namespace Cogipix\CogimixCommonBundle\Entity;
-use Cogipix\CogimixCommonBundle\Entity\TrackResult;
+use Cogipix\CogimixCommonBundle\Model\PlaylistConstant;
 
+use Cogipix\CogimixCommonBundle\Entity\TrackResult;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMSSerializer;
@@ -16,6 +18,7 @@ use JMS\Serializer\Annotation as JMSSerializer;
  */
 class Playlist
 {
+
     /**
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
@@ -29,7 +32,9 @@ class Playlist
     /**
      * @ORM\Column(type="string")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"playlist_list"})
+     * @JMSSerializer\Groups({"playlist_list","export"})
+     * @Assert\NotBlank( groups={"Create","Edit"});
+     * @Assert\Length(min=2, max=20,minMessage="playlist_name_too_short", maxMessage="playlist_name_too_long", groups={"Create","Edit"})
      * @var unknown_type
      */
     protected $name;
@@ -41,9 +46,11 @@ class Playlist
     protected $shortDescription;
 
     /**
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"export"})
      * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\TrackResult",indexBy="order", mappedBy="playlist",cascade={"persist","remove"})
      * @ORM\OrderBy({"order" = "ASC"})
-     * @JMSSerializer\Exclude()
+     * @var array
      */
     protected $tracks;
 
@@ -55,26 +62,33 @@ class Playlist
     protected $user;
 
     /**
-     * @ORM\Column(type="boolean",options={"default" = false})
+     * @ORM\Column(type="integer",options={"default" = 0})
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"playlist_list"})
+     * @Assert\Choice(choices = {0,1,2}, groups={"Create","Edit"})
      * @var unknown_type
      */
-    protected $shared = false;
+    protected $shared = 0;
 
     /**
      * @ORM\Column(type="integer")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"playlist_list"})
+     * @JMSSerializer\Groups({"playlist_list","export"})
      * @var unknown_type
      */
     protected $trackCount = 0;
     /**
      * @ORM\Column(type="datetime",nullable=true)
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"export"})
      * @var unknown_type
      */
     protected $createDate;
 
     /**
      * @ORM\Column(type="datetime",nullable=true)
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"export"})
      * @var unknown_type
      */
     protected $updateDate;
@@ -88,10 +102,30 @@ class Playlist
      */
     protected $webPicture;
 
+    /**
+     * @JMSSerializer\Exclude()
+     * @var unknown_type
+     */
+    protected $oldSharedValue = null;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="favoritePlaylists",indexBy="id")
+     **/
+    private $fans;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"playlist_list"})
+     * @var unknown_type
+     */
+    protected $fanCount = 0;
 
     public function __construct()
     {
         $this->tracks = new ArrayCollection();
+        $this->fans = new ArrayCollection();
+        $this->oldSharedValue = $this->shared;
     }
 
     public function getId()
@@ -168,6 +202,7 @@ class Playlist
 
     public function setShared($shared)
     {
+       // $this->oldSharedValue = $this->shared;
         $this->shared = $shared;
     }
 
@@ -188,7 +223,9 @@ class Playlist
      */
     public function onPreRemove()
     {
-        $this->user->decPlaylistCount();
+        if ($this->shared > PlaylistConstant::$NOT_SHARED) {
+            $this->user->decPlaylistCount();
+        }
     }
 
     /**
@@ -198,16 +235,20 @@ class Playlist
     {
         $this->createDate = new \DateTime();
         $this->updateDate = $this->createDate;
-        $this->user->incPlaylistCount();
+        if ($this->shared > PlaylistConstant::$NOT_SHARED) {
+            $this->user->incPlaylistCount();
+        }
+
     }
 
     /**
      * @ORM\PreUpdate
+     *
      */
     public function onPreUpdate()
     {
+        $this->updateDate = new \DateTime();
 
-        $this->updateDate=new \DateTime();
     }
 
     public function getTrackCount()
@@ -250,11 +291,68 @@ class Playlist
         $this->updateDate = $updateDate;
     }
 
-
-    public function getWebPicture(){
-        if($this->user == null ){
+    public function getWebPicture()
+    {
+        if ($this->user == null) {
             return UserPicture::getDefaultImage();
         }
         return $this->user->getWebPicture();
     }
+
+    public function getOldSharedValue()
+    {
+        return $this->oldSharedValue;
+    }
+
+    public function setOldSharedValue($oldSharedValue)
+    {
+        $this->oldSharedValue = $oldSharedValue;
+    }
+
+    public function getFans()
+    {
+        return $this->fans;
+    }
+
+    public function setFans($fans)
+    {
+        $this->fans = $fans;
+    }
+
+    public function addFan($fan)
+    {
+        $this->fans[$fan->getId()] = $fan;
+        $this->incFanCount();
+    }
+
+    public function removeFan($fan)
+    {
+        if ($this->fans->containsKey($fan->getId())) {
+            $this->fans->remove($fan->getId());
+            $this->decFanCount();
+        }
+    }
+
+    public function getFanCount()
+    {
+        return $this->fanCount;
+    }
+
+    public function setFanCount($fanCount)
+    {
+        $this->fanCount = $fanCount;
+    }
+
+    public function incFanCount()
+    {
+        $this->fanCount++;
+    }
+
+    public function decFanCount()
+    {
+        if ($this->fanCount > 0) {
+            $this->fanCount--;
+        }
+    }
+
 }
