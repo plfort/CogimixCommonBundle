@@ -77,9 +77,12 @@ abstract class AbstractMusicSearch implements PluginInterface,
             } else {
                 $this->buildQuery();
                 $results = $this->executeQuery();
-                $this->cacheManager
-                        ->insertCacheResult($search->getSongQuery(),
-                                $resultTag, $results);
+                if(!empty($results)){
+                	$this->cacheManager
+                	->insertCacheResult($search->getSongQuery(),
+                			$resultTag, $results);
+                }
+
                 return $results;
             }
         } else {

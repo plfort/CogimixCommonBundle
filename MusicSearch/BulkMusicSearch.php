@@ -8,28 +8,33 @@ class BulkMusicSearch{
 	private $musicSearch;
 
 
-	public function __construct(AbstractMusicSearch $musicSearch){
+	public function __construct(MusicSearchInterface $musicSearch){
 		$this->musicSearch = $musicSearch;
 	}
 
 	public function bulkSearchAndGuess(array $songQueries){
 		$results = array();
-		$bulkResults = $this->bulkSearch($songQueries);
+		$bulkResults = $this->bulkSearch($songQueries,3);
 		foreach($bulkResults as $bulkResult){
-			$track = $this->guessBestSong($bulkResult->getSearchQuery(), $bulkResult->getSearchResults());
-			if($track != null){
-				$results[]=$track;
+			$levResult = $this->guessBestSong($bulkResult->getSearchQuery(), $bulkResult->getSearchResults());
+			if($levResult['element'] != null){
+				$results[]=$levResult['element'];
 			}
 		}
 		return $results;
 	}
 
-	public function bulkSearch(array $songQueries){
+	public function bulkSearch(array $songQueries,$sleepTime=0){
+		ini_set('max_execution_time', 600);
 		$results = array();
 		foreach($songQueries as $songQuery){
 			$searchResults = $this->musicSearch->searchMusic($songQuery);
 			$bulkresult = new BulkResult($songQuery, $searchResults);
 			$results[]= $bulkresult;
+			if($sleepTime != 0){
+				sleep($sleepTime);
+			}
+
 		}
 		return $results;
 	}
@@ -43,7 +48,7 @@ class BulkMusicSearch{
 
 			// calculate the distance between the input word,
 			// and the current word
-			$lev = levenshtein($songQuery->_toString(), $track->__toString());
+			$lev = levenshtein($songQuery->__toString(), $track->__toString());
 
 			// check for an exact match
 			if ($lev == 0) {
@@ -60,12 +65,12 @@ class BulkMusicSearch{
 			// distance, OR if a next shortest word has not yet been found
 			if ($lev <= $shortest || $shortest < 0) {
 				// set the closest match, and shortest distance
-				$closest  = $word;
+				$closest  = $track;
 				$shortest = $lev;
 			}
 		}
 
-		return $closest;
+		return array('lev'=>$shortest,'element'=>$closest);
 
 	}
 
