@@ -69,7 +69,7 @@ class User extends BaseUser
     protected $playlistCount = 0;
 
     /**
-     * @ORM\OneToOne(targetEntity="UserPicture", inversedBy="user", cascade={"remove","persist"})
+     * @ORM\OneToOne(targetEntity="UserPicture", inversedBy="user", cascade={"remove","persist"},fetch="EAGER")
      * @ORM\JoinColumn(name="picture_id", referencedColumnName="id")
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"user_info"})

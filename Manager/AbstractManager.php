@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Cogipix\CogimixCommonBundle\Utils\LoggerAwareInterface;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Monolog\Logger;
 
 
 abstract class AbstractManager implements LoggerAwareInterface,SecurityContextAwareInterface {
@@ -20,8 +21,15 @@ abstract class AbstractManager implements LoggerAwareInterface,SecurityContextAw
      */
     protected $em;
 
+    /**
+     *
+     * @var Logger $logger
+     */
     protected $logger;
-
+     /**
+      *
+      * @var SecurityContextInterface $securityContext
+      */
     protected $securityContext;
 
 

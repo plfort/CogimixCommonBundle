@@ -81,7 +81,7 @@ class ServicesCompiler implements CompilerPassInterface
         }
         //menu view hook
         $menuRendererListDefinition = $container->findDefinition('cogimix.menu_renderer');
-        $taggedServices = $container->findTaggedServiceIds( 'cogimix.menu_renderer');
+        $taggedServices = $container->findTaggedServiceIds( 'cogimix.menu_item');
         foreach ($taggedServices as $id => $tagAttributes) {
             $menuRendererListDefinition->addMethodCall(
                     'addMenuRenderer',

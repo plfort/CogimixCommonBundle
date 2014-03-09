@@ -77,6 +77,7 @@ class PlaylistRepository extends EntityRepository{
 
        $query=$qb->getQuery();
        $query->useQueryCache(true);
+       //$query->useResultCache(true,600);
        return $query->getResult();
     }
 

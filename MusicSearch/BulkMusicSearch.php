@@ -3,10 +3,11 @@ namespace Cogipix\CogimixCommonBundle\MusicSearch;
 
 use Cogipix\CogimixCommonBundle\Model\SearchQuery;
 use Cogipix\CogimixCommonBundle\Model\BulkResult;
-class BulkMusicSearch{
+use Cogipix\CogimixCommonBundle\Utils\LoggerAwareInterface;
+class BulkMusicSearch implements LoggerAwareInterface{
 
 	private $musicSearch;
-
+    private $logger;
 
 	public function __construct(MusicSearchInterface $musicSearch){
 		$this->musicSearch = $musicSearch;
@@ -14,7 +15,7 @@ class BulkMusicSearch{
 
 	public function bulkSearchAndGuess(array $songQueries){
 		$results = array();
-		$bulkResults = $this->bulkSearch($songQueries,3);
+		$bulkResults = $this->bulkSearch($songQueries,1);
 		foreach($bulkResults as $bulkResult){
 			$levResult = $this->guessBestSong($bulkResult->getSearchQuery(), $bulkResult->getSearchResults());
 			if($levResult['element'] != null){
@@ -24,15 +25,19 @@ class BulkMusicSearch{
 		return $results;
 	}
 
-	public function bulkSearch(array $songQueries,$sleepTime=0){
-		ini_set('max_execution_time', 600);
+	public function bulkSearch(array $songQueries,$sleepTimeSeconds=0){
+		ini_set('max_execution_time', 700);
 		$results = array();
 		foreach($songQueries as $songQuery){
-			$searchResults = $this->musicSearch->searchMusic($songQuery);
-			$bulkresult = new BulkResult($songQuery, $searchResults);
-			$results[]= $bulkresult;
-			if($sleepTime != 0){
-				sleep($sleepTime);
+			try{
+				$searchResults = $this->musicSearch->searchMusic($songQuery);
+				$bulkresult = new BulkResult($songQuery, $searchResults);
+				$results[]= $bulkresult;
+				if($sleepTimeSeconds != 0){
+					sleep($sleepTimeSeconds);
+				}
+			}catch(\Exception $ex){
+				$this->logger->err($ex->getMessage());
 			}
 
 		}
@@ -74,9 +79,14 @@ class BulkMusicSearch{
 
 	}
 
-	private function compare($songQuery,$results){
 
 
-	}
+ /* (non-PHPdoc)
+  * @see \Cogipix\CogimixCommonBundle\Utils\LoggerAwareInterface::setLogger()
+  */
+ public function setLogger($logger) {
+ 	$this->logger = $logger;
+
+ }
 
 }
