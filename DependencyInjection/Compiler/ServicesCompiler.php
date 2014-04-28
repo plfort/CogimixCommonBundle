@@ -90,14 +90,14 @@ class ServicesCompiler implements CompilerPassInterface
         }
 
         //modal view hook
-        $modalRendererListDefinition = $container->findDefinition('cogimix.modal_renderer');
+       /* $modalRendererListDefinition = $container->findDefinition('cogimix.modal_renderer');
         $taggedServices = $container->findTaggedServiceIds( 'cogimix.modal_renderer');
         foreach ($taggedServices as $id => $tagAttributes) {
             $modalRendererListDefinition->addMethodCall(
                     'addModalRenderer',
                     array(new Reference($id))
             );
-        }
+        }*/
 
         //js import view hook
         $jsImportRendererListDefinition = $container->findDefinition('cogimix.jsimport_renderer');
@@ -110,24 +110,24 @@ class ServicesCompiler implements CompilerPassInterface
         }
 
         //css import view hook
-        $cssImportRendererListDefinition = $container->findDefinition('cogimix.cssimport_renderer');
+       /* $cssImportRendererListDefinition = $container->findDefinition('cogimix.cssimport_renderer');
         $taggedServices = $container->findTaggedServiceIds( 'cogimix.cssimport_renderer');
         foreach ($taggedServices as $id => $tagAttributes) {
             $cssImportRendererListDefinition->addMethodCall(
                     'addCssImportRenderer',
                     array(new Reference($id))
             );
-        }
+        }*/
 
         //widget import view hook
-        $widgetRendererListDefinition = $container->findDefinition('cogimix.widget_renderer');
+       /* $widgetRendererListDefinition = $container->findDefinition('cogimix.widget_renderer');
         $taggedServices = $container->findTaggedServiceIds( 'cogimix.widget_renderer');
         foreach ($taggedServices as $id => $tagAttributes) {
             $widgetRendererListDefinition->addMethodCall(
                     'addWidgetRenderer',
                     array(new Reference($id))
             );
-        }
+        }*/
 
         //dot template import view hook
         $dotTemplateRendererListDefinition = $container->findDefinition('cogimix.dot_renderer');
