@@ -91,6 +91,14 @@ class TrackResult
      * @var unknown_type
      */
     protected $oldShareableValue = null;
+    
+    /**
+     * 
+     * Duration in seconds
+     * @var int
+     * @ORM\Column(name="duration", type="integer", nullable=false)
+     */
+    protected $duration = 180;
 
     public function __construct()
     {
@@ -287,4 +295,13 @@ class TrackResult
     public function __toString(){
     	return trim($this->artist).' '.$this->title;
     }
+	public function getDuration() {
+		return $this->duration;
+	}
+	public function setDuration($duration) {
+		$this->duration = $duration;
+		return $this;
+	}
+	
+    
 }

@@ -120,6 +120,13 @@ class Playlist
      * @var unknown_type
      */
     protected $fanCount = 0;
+    
+    /**
+     * @ORM\Column(name="duration", type="integer", nullable=false)
+     * @var int
+     */
+    protected $duration = 0;
+    
 
     public function __construct()
     {
@@ -158,12 +165,22 @@ class Playlist
 
         $song->setPlaylist($this);
         $this->tracks->add($song);
+        $trackDuration = $song->getDuration();
+        if(!empty($trackDuration)){
+        	$this->increaseDuration($trackDuration);
+        }
 
     }
 
     public function removeSong($id)
     {
+    	
+    	$track = $this->tracks->get($id);
+    	if($track){
+    		$this->decreaseDuration($track->getDuration());
+    	}
         $this->tracks->remove($id);
+       
     }
 
     public function getUser()
@@ -223,7 +240,7 @@ class Playlist
      */
     public function onPreRemove()
     {
-        if ($this->shared > PlaylistConstant::$NOT_SHARED) {
+        if ($this->shared > PlaylistConstant::NOT_SHARED) {
             $this->user->decPlaylistCount();
         }
     }
@@ -235,7 +252,7 @@ class Playlist
     {
         $this->createDate = new \DateTime();
         $this->updateDate = $this->createDate;
-        if ($this->shared > PlaylistConstant::$NOT_SHARED) {
+        if ($this->shared > PlaylistConstant::NOT_SHARED) {
             $this->user->incPlaylistCount();
         }
 
@@ -354,5 +371,34 @@ class Playlist
             $this->fanCount--;
         }
     }
+    
+	public function getDuration() {
+		return $this->duration;
+	}
+	
+	public function setDuration($duration) {
+		$this->duration = $duration;
+		return $this;
+	}
+	
+	public function increaseDuration($duration)
+	{
+		if($duration > 0){
+			$this->duration += $duration;
+		}
+	}
+	
+	public function decreaseDuration($duration)
+	{
+		if($duration > 0){
+			$this->duration -= $duration;
+		}
+	}
+    
+	public function getTooltip()
+	{
+	    date_default_timezone_set('UTC');
+	    return $this->trackCount.' tracks ~ '.date("H:i:s",$this->duration);
+	}
 
 }

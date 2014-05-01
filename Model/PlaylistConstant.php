@@ -2,7 +2,7 @@
 namespace  Cogipix\CogimixCommonBundle\Model;
 class PlaylistConstant
 {
-    public static $NOT_SHARED = 0;
-    public static $SHARED_PUBLIC = 1;
-    public static $SHARED_LISTENER = 2;
+    const NOT_SHARED = 0;
+    const SHARED_PUBLIC = 1;
+    const SHARED_LISTENER = 2;
 }
