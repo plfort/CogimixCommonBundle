@@ -14,16 +14,19 @@ use Symfony\Component\DependencyInjection\Loader;
  */
 class CogimixCommonExtension extends Extension
 {
+    
+    private $config = array();
     /**
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $this->config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
         $loader->load('view_hooks.xml');
+
     }
 }

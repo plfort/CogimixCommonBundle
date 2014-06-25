@@ -6,21 +6,36 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 
 class PluginProvider implements PluginProviderInterface{
 
-    protected $plugins = array();
+    protected $staticPlugins = array();
+   
     protected $pluginProviders;
 
 
     public function getAvailablePlugins(){
+        
+        
+        $dynamicPlugins = array();
+        foreach($this->pluginProviders as $pluginProvider){
+            $availablePlugins = $pluginProvider->getAvailablePlugins();
+            if(!empty($availablePlugins)){
+                foreach($availablePlugins as $availablePlugin){
+                    $dynamicPlugins[$availablePlugin->getAlias()]=$availablePlugin;
 
-        return $this->plugins;
+                }
+            }
+        }
+        return array_merge($this->staticPlugins,$dynamicPlugins);
+
     }
 
 
     public function getPluginChoiceList()
     {
         $choices = array();
-        if(!empty($this->plugins)){
-            foreach($this->plugins as $alias=>$plugin){
+        $plugins = $this->getAvailablePlugins();
+        
+        if(!empty($plugins)){
+            foreach($plugins as $alias=>$plugin){
                 $choices[$alias] = $plugin->getName();
             }
         }
@@ -29,18 +44,14 @@ class PluginProvider implements PluginProviderInterface{
 
     public function addPluginProvider(PluginProviderInterface $pluginProvider){
         $this->pluginProviders[$pluginProvider->getAlias()]=$pluginProvider;
-        $availablePlugins = $pluginProvider->getAvailablePlugins();
-        if(!empty($availablePlugins)){
-            foreach($availablePlugins as $availablePlugin){
-                $this->addPlugin($availablePlugin);
-            }
-        }
+ 
     }
 
     public function addPlugin(PluginInterface $plugin){
         $alias = $plugin->getAlias();
-        if(!array_key_exists($alias, $this->plugins)){
-            $this->plugins[$alias]=$plugin;
+      
+        if(!array_key_exists($alias, $this->staticPlugins)){
+            $this->staticPlugins[$alias]=$plugin;
         }else{
             throw new \RuntimeException('A plugin with alias '.$alias.' already exists');
         }
