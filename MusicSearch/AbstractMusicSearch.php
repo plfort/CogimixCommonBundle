@@ -40,7 +40,7 @@ abstract class AbstractMusicSearch implements PluginInterface,
 
 
 
-    public function getPopularSongs(){
+    public function getPopularSongs(SearchQuery $searchQuery){
         $this->logger->debug('Get popular music in ' . get_class($this));
         if (null != $this->cacheManager) {
             $resultTag = $this->getResultTag();

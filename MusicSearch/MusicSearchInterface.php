@@ -9,7 +9,7 @@ use Cogipix\CogimixCommonBundle\Model\SearchQuery;
 interface MusicSearchInterface{
 
      function searchMusic(SearchQuery $search);
-     function getPopularSongs();
+     function getPopularSongs(SearchQuery $search);
 }
 
 ?>

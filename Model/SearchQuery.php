@@ -14,6 +14,8 @@ class SearchQuery
      * @var unknown_type
      */
     protected $services;
+    
+    protected $sort=true;
 
     public function __construct($songQuery = null, $artistQuery = '')
     {
@@ -56,6 +58,18 @@ class SearchQuery
         return trim($this->artistQuery.' '.$this->songQuery);
 
     }
+
+    public function getSort()
+    {
+        return $this->sort;
+    }
+
+    public function setSort($sort)
+    {
+        $this->sort = $sort;
+        return $this;
+    }
+	
 
 
 
