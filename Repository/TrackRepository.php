@@ -22,6 +22,7 @@ class TrackRepository extends EntityRepository
         $qb->andWhere('t.shareable > :playlist_not_shared');
         $qb->setParameter('playlistId', $playlistId);
         $qb->setParameter('playlist_not_shared', PlaylistConstant::NOT_SHARED);
+        $qb->orderBy('t.order','ASC');
         $query = $qb->getQuery();
         $query->useQueryCache(true);
         return $query->getResult();
