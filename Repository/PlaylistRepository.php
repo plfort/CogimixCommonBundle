@@ -40,7 +40,7 @@ class PlaylistRepository extends EntityRepository{
         $qb->andWhere('u.id NOT IN (SELECT u2.id FROM CogimixCommonBundle:User u2 LEFT JOIN u2.myListenings listenings LEFT JOIN u2.listeners listeners WHERE  (listeners.fromUser = :currentUser AND listeners.accepted = 0) OR (listenings.toUser = :currentUser AND listenings.accepted = 0))');
         $qb->setParameter('id',$playlistId);
         $qb->setParameter('currentUser',$currentUser);
-
+        
         $query=$qb->getQuery();
         $query->useQueryCache(true);
 
