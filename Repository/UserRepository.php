@@ -36,7 +36,25 @@ class UserRepository extends EntityRepository{
         }
     }
 
-    public function findByUsernameLike($currentUser,$username){
+    public function findPopularUsers($currentUser,$limit = 50)
+    {
+        $qb= $this->createQueryBuilder('u');
+        $qb->select('u, RAND() as HIDDEN r');
+        $qb->addSelect('(CASE WHEN u IN (SELECT IDENTITY(ml.toUser) FROM CogimixCommonBundle:Listener ml WHERE ml.fromUser = :user) THEN 1 ELSE 0 END) as added');
+        $qb->leftJoin('u.listeners','l',Join::WITH,'l.fromUser = :user');
+        $qb->andWhere('l IS NULL OR l.accepted = 1')
+        ->andWhere('u.playlistCount > 0')
+        ->setParameter('user', $currentUser->getId())
+        ->setMaxResults($limit)
+        ->orderBy('r')
+        ->setMaxResults($limit);
+        $query = $qb->getQuery();
+        $query->useQueryCache(true)->useResultCache(true,3600);
+        return $query->getResult();
+
+    }
+
+    public function findByUsernameLike($currentUser,$username,$limit=50){
        $qb= $this->createQueryBuilder('u');
        $qb->select('u');
        $qb->addSelect('(CASE WHEN u IN (SELECT IDENTITY(ml.toUser) FROM CogimixCommonBundle:Listener ml WHERE ml.fromUser = :user) THEN 1 ELSE 0 END) as added');
@@ -45,6 +63,7 @@ class UserRepository extends EntityRepository{
        $qb->leftJoin('u.listeners','l',Join::WITH,'l.fromUser = :user');
        $qb->andWhere('l IS NULL OR l.accepted = 1');
        $qb->setParameter('user', $currentUser->getId());
+       $qb->setMaxResults($limit);
        $query=$qb->getQuery();
        $query->useQueryCache(true);
        return $query->getResult();

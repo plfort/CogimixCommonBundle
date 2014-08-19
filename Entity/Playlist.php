@@ -25,14 +25,14 @@ class Playlist
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @JMSSerializer\ReadOnly()
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"playlist_list"})
+     * @JMSSerializer\Groups({"playlist_list","playlist_detail"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"playlist_list","export"})
+     * @JMSSerializer\Groups({"playlist_list","export","playlist_detail"})
      * @Assert\NotBlank( groups={"Create","Edit"});
      * @Assert\Length(min=2, max=20,minMessage="playlist_name_too_short", maxMessage="playlist_name_too_long", groups={"Create","Edit"})
      * @var unknown_type
@@ -47,7 +47,7 @@ class Playlist
 
     /**
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"export"})
+     * @JMSSerializer\Groups({"export","playlist_detail"})
      * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\TrackResult",indexBy="order", mappedBy="playlist",cascade={"persist","remove"})
      * @ORM\OrderBy({"order" = "ASC"})
      * @var array
@@ -57,7 +57,7 @@ class Playlist
     /**
      * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\User", inversedBy="playlists")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"user_minimal"})
+     * @JMSSerializer\Groups({"user_minimal","playlist_detail"})
      */
     protected $user;
 
@@ -97,7 +97,7 @@ class Playlist
      * @JMSSerializer\Expose()
      * @JMSSerializer\ReadOnly()
      * @JMSSerializer\Accessor(getter="getWebPicture")
-     * @JMSSerializer\Groups({"playlist_list"})
+     * @JMSSerializer\Groups({"playlist_list","playlist_detail"})
      * @var unknown_type
      */
     protected $webPicture;
@@ -116,17 +116,17 @@ class Playlist
     /**
      * @ORM\Column(type="integer")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"playlist_list"})
+     * @JMSSerializer\Groups({"playlist_list","playlist_detail"})
      * @var unknown_type
      */
     protected $fanCount = 0;
-    
+
     /**
      * @ORM\Column(name="duration", type="integer", nullable=false)
      * @var int
      */
     protected $duration = 0;
-    
+
 
     public function __construct()
     {
@@ -174,13 +174,13 @@ class Playlist
 
     public function removeSong($id)
     {
-    	
+
     	$track = $this->tracks->get($id);
     	if($track){
     		$this->decreaseDuration($track->getDuration());
     	}
         $this->tracks->remove($id);
-       
+
     }
 
     public function getUser()
@@ -371,30 +371,30 @@ class Playlist
             $this->fanCount--;
         }
     }
-    
+
 	public function getDuration() {
 		return $this->duration;
 	}
-	
+
 	public function setDuration($duration) {
 		$this->duration = $duration;
 		return $this;
 	}
-	
+
 	public function increaseDuration($duration)
 	{
 		if($duration > 0){
 			$this->duration += $duration;
 		}
 	}
-	
+
 	public function decreaseDuration($duration)
 	{
 		if($duration > 0){
 			$this->duration -= $duration;
 		}
 	}
-    
+
 	public function getTooltip()
 	{
 	    date_default_timezone_set('UTC');

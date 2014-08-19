@@ -17,36 +17,38 @@ class TrackResult
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @JMSSerializer\Groups({"playlist_detail"})
      */
     protected $id;
 
     /**
      * @ORM\Column( name="trackOrder",type="integer", nullable=false)
-     * @JMSSerializer\Groups({"export"})
+     * @JMSSerializer\Groups({"export","playlist_detail"})
      */
     protected $order;
 
     /**
      * @ORM\Column(type="string")
-     * @JMSSerializer\Groups({"export"})
+     * @JMSSerializer\Groups({"export","playlist_detail"})
      * @var unknown_type
      */
     protected $title;
     /**
      * @ORM\Column(type="string")
-     * @JMSSerializer\Groups({"export"})
+     * @JMSSerializer\Groups({"export","playlist_detail"})
      * @var unknown_type
      */
     protected $artist = '';
     /**
      * @ORM\Column(type="string")
      * @JMSSerializer\SerializedName("entryId")
+     * @JMSSerializer\Groups({"export","playlist_detail"})
      * @var unknown_type
      */
     protected $entryId;
     /**
      * @ORM\Column(type="string")
-     * @JMSSerializer\Groups({"export"})
+     * @JMSSerializer\Groups({"export","playlist_detail"})
      * @var unknown_type
      */
     protected $thumbnails;
@@ -59,7 +61,7 @@ class TrackResult
     protected $playlist;
     /**
      * @ORM\Column(type="string")
-     * @JMSSerializer\Groups({"export"})
+     * @JMSSerializer\Groups({"export","playlist_detail"})
      * @var unknown_type
      */
     protected $tag;
@@ -68,6 +70,7 @@ class TrackResult
      *
      * @ORM\Column(type="array")
      * @JMSSerializer\SerializedName("pluginProperties")
+     * @JMSSerializer\Groups({"playlist_detail"})
      * @var array $pluginProperties
      */
     protected $pluginProperties;
@@ -81,6 +84,7 @@ class TrackResult
 
     /**
      * @ORM\Column(type="boolean")
+     * @JMSSerializer\Groups({"playlist_detail"})
      * @var unknown_type
      */
     protected $shareable = true;
@@ -91,12 +95,13 @@ class TrackResult
      * @var unknown_type
      */
     protected $oldShareableValue = null;
-    
+
     /**
-     * 
+     *
      * Duration in seconds
      * @var int
      * @ORM\Column(name="duration", type="integer", nullable=false)
+     * @JMSSerializer\Groups({"playlist_detail"})
      */
     protected $duration = 180;
 
@@ -302,6 +307,6 @@ class TrackResult
 		$this->duration = $duration;
 		return $this;
 	}
-	
-    
+
+
 }

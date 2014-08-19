@@ -7,13 +7,13 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 class PluginProvider implements PluginProviderInterface{
 
     protected $staticPlugins = array();
-   
+
     protected $pluginProviders;
 
 
     public function getAvailablePlugins(){
-        
-        
+
+
         $dynamicPlugins = array();
         foreach($this->pluginProviders as $pluginProvider){
             $availablePlugins = $pluginProvider->getAvailablePlugins();
@@ -29,14 +29,18 @@ class PluginProvider implements PluginProviderInterface{
     }
 
 
-    public function getPluginChoiceList()
+    public function getPluginChoiceList($useImg = false)
     {
         $choices = array();
         $plugins = $this->getAvailablePlugins();
-        
+
         if(!empty($plugins)){
             foreach($plugins as $alias=>$plugin){
-                $choices[$alias] = $plugin->getName();
+                $label = $plugin->getName();
+                if($useImg == true){
+                    $label = $plugin->getDefaultIcon();
+                }
+                $choices[$alias] = $label;
             }
         }
         return $choices;
@@ -44,12 +48,12 @@ class PluginProvider implements PluginProviderInterface{
 
     public function addPluginProvider(PluginProviderInterface $pluginProvider){
         $this->pluginProviders[$pluginProvider->getAlias()]=$pluginProvider;
- 
+
     }
 
     public function addPlugin(PluginInterface $plugin){
         $alias = $plugin->getAlias();
-      
+
         if(!array_key_exists($alias, $this->staticPlugins)){
             $this->staticPlugins[$alias]=$plugin;
         }else{
