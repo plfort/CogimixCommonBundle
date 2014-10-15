@@ -61,7 +61,8 @@ class UserPicture
      */
     public function getWebPath()
     {
-       return empty($this->picFilename) ? UserPicture::$DEFAULT_IMG : ImageHelper::getThumbsnailWebPath($this->user->getId()).$this->picFilename;
+        
+       return empty($this->picFilename) ? $this->user->getWebPicture(true) : ImageHelper::getThumbsnailWebPath($this->user->getId()).$this->picFilename;
        /* return null === $this->path ? UserPicture::$DEFAULT_IMG
                 : $this->getUploadDir() . '/' . $this->path;*/
     }

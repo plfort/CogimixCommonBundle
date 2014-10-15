@@ -195,10 +195,11 @@ class User extends BaseUser
         }
     }
 
-    public function getWebPicture()
+    public function getWebPicture($forceDefault=false)
     {
-        if ($this->picture == null) {
-            return UserPicture::getDefaultImage();
+        if ($this->picture == null || $forceDefault == true) {
+            return 'https://secure.gravatar.com/avatar/'.md5($this->email).'?s=200&r=pg&d=retro';
+           // return UserPicture::getDefaultImage();
         }
         return $this->picture->getWebPath();
     }
