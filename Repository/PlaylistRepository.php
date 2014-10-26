@@ -81,6 +81,20 @@ class PlaylistRepository extends EntityRepository{
        return $query->getResult();
     }
 
+    
+    public function getUserFavoritePlaylists($user)
+    {
+         $qb= $this->createQueryBuilder('p')
+         ->addSelect('owner')
+         ->join('p.fans', 'fan',Join::WITH,'fan.id  = :userId')
+         ->join('p.user','owner')
+         ->setParameter('userId', $user->getId());
+         
+         $query=$qb->getQuery();
+         $query->useQueryCache(true);
+         //$query->useResultCache(true,600);
+         return $query->getResult();
+    }
 
 
 }
