@@ -93,12 +93,22 @@ class UserRepository extends EntityRepository{
         return $query->getResult();
     }
     
-    public function getListeningUsers($currentUser){
+    public function getListeningUsers($currentUser,$orderBy='shareCount'){
+        if(!empty($orderBy) && !in_array($orderBy,['shareCount'])){
+            $orderBy = 'shareCount';
+        }
+        
         $qb= $this->createQueryBuilder('u');
         $qb->join('u.listeners','l',Join::WITH,'l.fromUser = :currentUser');
 
         $qb->setParameter('currentUser', $currentUser);
         $qb->andWhere('l.accepted = 1');
+        if(!empty($orderBy)){
+            $qb->leftJoin('l.suggestions', 's')
+                ->addSelect('COUNT(s.id) AS HIDDEN shareCount')
+                ->orderBy('shareCount','DESC')
+            ->groupBy('u.id');
+        }
         $query=$qb->getQuery();
         $query->useQueryCache(true);
         return $query->getResult();
