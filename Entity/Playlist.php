@@ -34,7 +34,7 @@ class Playlist
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"playlist_list","export","playlist_detail"})
      * @Assert\NotBlank( groups={"Create","Edit"});
-     * @Assert\Length(min=2, max=20,minMessage="playlist_name_too_short", maxMessage="playlist_name_too_long", groups={"Create","Edit"})
+     * @Assert\Length(min=2, max=40,minMessage="playlist_name_too_short", maxMessage="playlist_name_too_long", groups={"Create","Edit"})
      * @var unknown_type
      */
     protected $name;
