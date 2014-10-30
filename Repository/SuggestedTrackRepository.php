@@ -5,6 +5,7 @@ namespace Cogipix\CogimixCommonBundle\Repository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 
 
 /**
@@ -42,7 +43,7 @@ class SuggestedTrackRepository extends EntityRepository{
         $qb->orderBy('s.createDate','DESC');
         $query=$qb->getQuery();
         $query->useQueryCache(true);
-        return $query->getResult();
+        return $query->getResult(Query::HYDRATE_ARRAY);
     }
     
     
@@ -60,7 +61,7 @@ class SuggestedTrackRepository extends EntityRepository{
         }
         $query=$qb->getQuery();
         $query->useQueryCache(true);
-        return $query->getResult();
+        return $query->getResult(Query::HYDRATE_ARRAY);
     }
 
 
