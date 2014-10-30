@@ -57,7 +57,7 @@ class UserRepository extends EntityRepository{
        $qb= $this->createQueryBuilder('u');
        $qb->select('u');
        $qb->addSelect('(CASE WHEN u IN (SELECT IDENTITY(ml.toUser) FROM CogimixCommonBundle:Listener ml WHERE ml.fromUser = :user) THEN 1 ELSE 0 END) as added');
-       $qb->where($qb->expr()->like('u.username',$qb->expr()->literal($username.'%')));
+       $qb->where($qb->expr()->like('u.username',$qb->expr()->literal('%'.$username.'%')));
        $qb->andWhere('u.id != :user');
        $qb->leftJoin('u.listeners','l',Join::WITH,'l.fromUser = :user  AND l.accepted=1');
        $qb->setParameter('user', $currentUser->getId());
