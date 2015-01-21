@@ -95,6 +95,11 @@ class User extends BaseUser
      */
     private $shortDescription;
 
+    /**
+     * @ORM\Column(type="boolean",options={"default"=false});
+     */
+    private $acceptNews;
+
     public function __construct()
     {
         parent::__construct();
@@ -226,5 +231,29 @@ class User extends BaseUser
             $this->favoritePlaylists->remove($favoritePlaylist->getId());
         }
     }
+
+    public function getShortDescription()
+    {
+        return $this->shortDescription;
+    }
+
+    public function setShortDescription($shortDescription)
+    {
+        $this->shortDescription = $shortDescription;
+        return $this;
+    }
+
+    public function getAcceptNews()
+    {
+        return $this->acceptNews;
+    }
+
+    public function setAcceptNews($acceptNews)
+    {
+        $this->acceptNews = $acceptNews;
+        return $this;
+    }
+
+
 
 }
