@@ -64,7 +64,7 @@ class Playlist
     /**
      * @ORM\Column(type="integer",options={"default" = 0})
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"playlist_list"})
+     * @JMSSerializer\Groups({"playlist_list","playlist_detail"})
      * @Assert\Choice(choices = {0,1,2}, groups={"Create","Edit"})
      * @var unknown_type
      */
