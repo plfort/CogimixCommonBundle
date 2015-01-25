@@ -8,4 +8,6 @@ interface PlaylistRendererInterface{
     public function getListTemplate();
 
     public function getPlaylists();
+
+    public function getRenderPlaylistsParameters();
 }
