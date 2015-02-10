@@ -14,7 +14,7 @@ use JMS\Serializer\Annotation as JMSSerializer;
  */
 class UserPicture
 {
-    private static $DEFAULT_IMG = '/bundles/cogimix/images/mini_logo_166.png';
+    private static $DEFAULT_IMG = '/bundles/cogimix/images/mini_logo.png';
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -61,7 +61,7 @@ class UserPicture
      */
     public function getWebPath()
     {
-        
+
        return empty($this->picFilename) ? $this->user->getWebPicture(true) : ImageHelper::getThumbsnailWebPath($this->user->getId()).$this->picFilename;
        /* return null === $this->path ? UserPicture::$DEFAULT_IMG
                 : $this->getUploadDir() . '/' . $this->path;*/
