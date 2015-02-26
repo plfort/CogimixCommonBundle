@@ -1,21 +1,22 @@
 {
-    "name": "cogipix/cogimixcommon",
-    "type": "symfony-bundle",
-    "authors": [
-        {
-            "name": "Pierre-Louis FORT",
-            "email": "plfort@cogipix.com"
-        }
-    ],
-    "require": {
-       "php": ">=5.3.3",
-       "doctrine/orm": ">=2.2.3,<2.4-dev",
-       "doctrine/doctrine-bundle": "1.2.*",
-       "friendsofsymfony/user-bundle": "dev-master"
-     
-    },
-    "autoload": {
-        "psr-0": {"Cogipix\\CogimixCommonBundle": ""}
-    },
-    "target-dir": "Cogipix/CogimixCommonBundle"
+	"name" : "cogipix/cogimixcommon",
+	"type" : "symfony-bundle",
+	"authors" : [{
+			"name" : "Pierre-Louis FORT",
+			"email" : "plfort@cogipix.com"
+		}
+	],
+	"require" : {
+		"php" : ">=5.3.3",
+		"doctrine/orm" : ">=2.2.3,<2.4-dev",
+		"doctrine/doctrine-bundle" : "1.2.*",
+		"friendsofsymfony/user-bundle" : "dev-master",
+		"nlp-tools/nlp-tools" : "0.1.*"
+	},
+	"autoload" : {
+		"psr-0" : {
+			"Cogipix\\CogimixCommonBundle" : ""
+		}
+	},
+	"target-dir" : "Cogipix/CogimixCommonBundle"
 }

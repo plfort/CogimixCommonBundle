@@ -144,16 +144,18 @@ class TrackResult
 
     public function getArtist()
     {
+        if (empty($this->artist)) {
+            return "Unknown artist";
+        }
+
         return $this->artist;
     }
 
     public function setArtist($artist)
     {
-        if (empty($artist)) {
-            $this->artist = "Unknown artist";
-        } else {
-            $this->artist = $artist;
-        }
+
+         $this->artist = $artist;
+
     }
 
     public function getThumbnails()
@@ -298,8 +300,14 @@ class TrackResult
     }
 
     public function __toString(){
-    	return trim($this->artist).' '.$this->title;
+    	return trim($this->getArtist()).' '.$this->title;
     }
+
+    public function getArtistAndTitle()
+    {
+        return trim($this->artist.' '.$this->title);
+    }
+
 	public function getDuration() {
 		return $this->duration;
 	}

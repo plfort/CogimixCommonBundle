@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @author pilou
  */
 use Symfony\Component\Translation\TranslatorInterface;
+use JMS\Serializer\SerializationContext;
 
 class AjaxResult {
 
@@ -44,7 +45,7 @@ class AjaxResult {
     }
 
 
-    public function getJSON($serializer=null){
+    public function getJSON($serializer=null,$groups=null){
         if($serializer==null){
             $encoders = array( new JsonEncoder());
             $normalizers = array(new GetSetMethodNormalizer());
@@ -65,6 +66,12 @@ class AjaxResult {
         }
         if(!empty($this->data)){
         	$r['data']=  $this->data;
+        }
+
+        if($groups){
+            if($serializer instanceof \JMS\Serializer\SerializerInterface){
+                return $serializer->serialize($r, 'json',SerializationContext::create()->setGroups($groups));
+            }
         }
         return $serializer->serialize($r, 'json');
     }
@@ -106,9 +113,9 @@ class AjaxResult {
         $this->data[$key]=$val;
     }
 
-    public function createResponse($serializer=null){
+    public function createResponse($serializer=null,$groups = array()){
 
-        return new Response($this->getJSON($serializer));
+        return new Response($this->getJSON($serializer,$groups));
     }
 
 

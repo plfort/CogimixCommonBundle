@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMSSerializer;
+use Cogipix\CogimixBundle\Entity\ImportPlaylistTask;
 
 /**
  *
@@ -126,6 +127,14 @@ class Playlist
      * @var int
      */
     protected $duration = 0;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Cogipix\CogimixBundle\Entity\ImportPlaylistTask", mappedBy="playlist")
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"playlist_detail"})
+     * @var ImportPlaylistTask
+     */
+    protected $importTask;
 
 
     public function __construct()
@@ -400,5 +409,19 @@ class Playlist
 	    date_default_timezone_set('UTC');
 	    return $this->trackCount.' tracks ~ '.date("H:i:s",$this->duration);
 	}
+
+    public function getImportTask()
+    {
+        return $this->importTask;
+    }
+
+    public function setImportTask($importTask)
+    {
+        $this->importTask = $importTask;
+        return $this;
+    }
+
+
+
 
 }
