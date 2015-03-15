@@ -100,6 +100,18 @@ class User extends BaseUser
      */
     private $acceptNews;
 
+    /**
+     * @ORM\OneToMany(targetEntity="SearchQuery", mappedBy="user")
+     * @var ArrayCollection()
+     */
+    private $searchQueries;
+
+    /**
+     * @ORM\OneToMany(targetEntity="PlayedTrack", mappedBy="user")
+     * @var ArrayCollection()
+     */
+    private $playedTracks;
+
     public function __construct()
     {
         parent::__construct();
@@ -107,6 +119,8 @@ class User extends BaseUser
         $this->favoritePlaylists = new ArrayCollection();
         $this->myListenings = new ArrayCollection();
         $this->listeners = new ArrayCollection();
+        $this->searchQueries = new ArrayCollection();
+        $this->playedTracks = new ArrayCollection();
         $this->picture = new UserPicture();
         // your own logic
     }
