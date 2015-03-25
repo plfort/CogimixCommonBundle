@@ -303,9 +303,9 @@ class TrackResult
     	return trim($this->getArtist()).' '.$this->title;
     }
 
-    public function getArtistAndTitle()
+    public function getArtistAndTitle($separator=' ')
     {
-        return trim($this->artist.' '.$this->title);
+        return trim($this->artist.$separator.$this->title);
     }
 
 	public function getDuration() {
