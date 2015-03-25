@@ -129,7 +129,7 @@ class Playlist
     protected $duration = 0;
 
     /**
-     * @ORM\OneToOne(targetEntity="Cogipix\CogimixBundle\Entity\ImportPlaylistTask", mappedBy="playlist")
+     * @ORM\OneToOne(targetEntity="Cogipix\CogimixBundle\Entity\ImportPlaylistTask",inversedBy="playlist")
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"playlist_detail"})
      * @var ImportPlaylistTask
