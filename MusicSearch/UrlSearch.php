@@ -46,8 +46,9 @@ class UrlSearch implements LoggerAwareInterface
 
 
                     foreach ($links as $url) {
-
-                        if (strlen($url) > 1 && strpos($url, '/') === 0) {
+                        if(strrpos($url, '//', -strlen($url)) === 0){
+                            $url = 'http:' . $url;
+                        }elseif (strlen($url) > 1 && strpos($url, '/') === 0 && strrpos($url, '//', -strlen($url)) !== 0) {
                             $url = $parsedUrl->host . $url;
                         }
 
