@@ -79,7 +79,7 @@ class UserRepository extends EntityRepository{
         $query->useQueryCache(true);
         return $query->getResult();
     }
-    
+
     public function getListenings($user,$currentUser){
         $qb= $this->createQueryBuilder('u');
         $qb->select('u')
@@ -92,12 +92,12 @@ class UserRepository extends EntityRepository{
         $query->useQueryCache(true);
         return $query->getResult();
     }
-    
+
     public function getListeningUsers($currentUser,$orderBy='shareCount'){
         if(!empty($orderBy) && !in_array($orderBy,['shareCount'])){
             $orderBy = 'shareCount';
         }
-        
+
         $qb= $this->createQueryBuilder('u');
         $qb->join('u.listeners','l',Join::WITH,'l.fromUser = :currentUser');
 
@@ -123,6 +123,22 @@ class UserRepository extends EntityRepository{
         $query->useQueryCache(true);
 
         return $query->getResult();
+    }
+
+    /**
+     * Finds a user either by email, or username
+     *
+     * @param string $usernameOrEmail
+     *
+     * @return UserInterface
+     */
+    public function findOneByUsernameOrEmail($usernameOrEmail)
+    {
+        if (filter_var($usernameOrEmail, FILTER_VALIDATE_EMAIL)) {
+            return $this->findOneByEmail($usernameOrEmail);
+        }
+
+        return $this->findOneByUsername($usernameOrEmail);
     }
 
 }
