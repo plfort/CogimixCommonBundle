@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMSSerializer;
 use Cogipix\CogimixBundle\Entity\ImportPlaylistTask;
+use JMS\Serializer\Annotation\Inline;
+
 
 /**
  *
@@ -47,13 +49,25 @@ class Playlist
     protected $shortDescription;
 
     /**
-     * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"export","playlist_detail"})
+     *
      * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\TrackResult",indexBy="order", mappedBy="playlist",cascade={"persist","remove"})
      * @ORM\OrderBy({"order" = "ASC"})
      * @var array
      */
     protected $tracks;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\PlaylistTrack",indexBy="order", mappedBy="playlist",cascade={"persist","remove"})
+     * @ORM\OrderBy({"order" = "ASC"})
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"export","playlist_detail"})
+     * @JMSSerializer\SerializedName("tracks")
+     *
+     *
+     * @var ArrayCollection()
+     */
+    protected $playlistTracks;
+
 
     /**
      * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\User", inversedBy="playlists")
@@ -140,6 +154,7 @@ class Playlist
     public function __construct()
     {
         $this->tracks = new ArrayCollection();
+        $this->playlistTracks = new ArrayCollection();
         $this->fans = new ArrayCollection();
         $this->oldSharedValue = $this->shared;
     }
@@ -169,26 +184,10 @@ class Playlist
         $this->tracks = $tracks;
     }
 
-    public function addSong(TrackResult $song, $order = null)
+    public function addPlaylistTrack(PlaylistTrack $playlistTrack)
     {
-
-        $song->setPlaylist($this);
-        $this->tracks->add($song);
-        $trackDuration = $song->getDuration();
-        if(!empty($trackDuration)){
-        	$this->increaseDuration($trackDuration);
-        }
-
-    }
-
-    public function removeSong($id)
-    {
-
-    	$track = $this->tracks->get($id);
-    	if($track){
-    		$this->decreaseDuration($track->getDuration());
-    	}
-        $this->tracks->remove($id);
+        $playlistTrack->setPlaylist($this);
+        $this->playlistTracks->add($playlistTrack);
 
     }
 
@@ -201,19 +200,14 @@ class Playlist
     {
         $this->user = $user;
     }
-    public function updateTracksOrder()
-    {
-        foreach ($this->tracks as $order => $track) {
-            $track->setOrder($order);
-        }
-    }
+
     public function getTrack($order)
     {
-        if (!isset($this->tracks[$order])) {
+        if (!isset($this->playlistTracks[$order])) {
             throw new \InvalidArgumentException(
                     "Track not found : order : " . $order);
         }
-        return $this->tracks[$order];
+        return $this->playlistTracks[$order];
     }
 
     public function getAlias()
@@ -420,6 +414,18 @@ class Playlist
         $this->importTask = $importTask;
         return $this;
     }
+
+    public function getPlaylistTracks()
+    {
+        return $this->playlistTracks;
+    }
+
+    public function setPlaylistTracks($playlistTracks)
+    {
+        $this->playlistTracks = $playlistTracks;
+        return $this;
+    }
+
 
 
 

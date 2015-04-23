@@ -1,16 +1,21 @@
 <?php
-
 namespace Cogipix\CogimixCommonBundle\Entity;
+
 use JMS\Serializer\Annotation as JMSSerializer;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * @ORM\Table(name="track")
+ * @ORM\Table(name="song",uniqueConstraints={@ORM\UniqueConstraint(name="song_unique",columns={"tag","entryId"})},
+ *      indexes={@ORM\Index(name="song_idx", columns={"tag","entryId"})})
  * @JMSSerializer\AccessType("public_method")
- * @ORM\Entity(repositoryClass="Cogipix\CogimixCommonBundle\Repository\TrackRepository",readOnly=true)
- * @ORM\HasLifecycleCallbacks
+ * @ORM\Entity(repositoryClass="Cogipix\CogimixCommonBundle\Repository\SongRepository")
+ * @UniqueEntity(fields="tag,entryId")
+ * @author plfort - Cogipix
+ *
  */
-class TrackResult
+class Song
 {
 
     /**
@@ -20,12 +25,6 @@ class TrackResult
      * @JMSSerializer\Groups({"playlist_detail"})
      */
     protected $id;
-
-    /**
-     * @ORM\Column( name="trackOrder",type="integer", nullable=false)
-     * @JMSSerializer\Groups({"export","playlist_detail"})
-     */
-    protected $order;
 
     /**
      * @ORM\Column(type="string")
@@ -39,6 +38,7 @@ class TrackResult
      * @var unknown_type
      */
     protected $artist = '';
+
     /**
      * @ORM\Column(type="string")
      * @JMSSerializer\SerializedName("entryId")
@@ -46,19 +46,7 @@ class TrackResult
      * @var unknown_type
      */
     protected $entryId;
-    /**
-     * @ORM\Column(type="string")
-     * @JMSSerializer\Groups({"export","playlist_detail"})
-     * @var unknown_type
-     */
-    protected $thumbnails;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\Playlist", inversedBy="tracks")
-     * @var unknown_type
-     * @JMSSerializer\Exclude()
-     */
-    protected $playlist;
     /**
      * @ORM\Column(type="string")
      * @JMSSerializer\Groups({"export","playlist_detail"})
@@ -76,6 +64,13 @@ class TrackResult
     protected $pluginProperties;
 
     /**
+     * @ORM\Column(type="string")
+     * @JMSSerializer\Groups({"export","playlist_detail"})
+     * @var unknown_type
+     */
+    protected $thumbnails;
+
+    /**
      * @ORM\Column(type="string",nullable=true)
      * @JMSSerializer\Exclude()
      * @var unknown_type
@@ -88,7 +83,6 @@ class TrackResult
      * @var unknown_type
      */
     protected $shareable = true;
-
 
     /**
      * @JMSSerializer\Exclude()
@@ -105,10 +99,34 @@ class TrackResult
      */
     protected $duration = 180;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\PlaylistTrack",indexBy="order", mappedBy="song",cascade={"persist","remove"})
+     * @var ArrayCollection()
+     */
+    protected $playlistTracks;
+
     public function __construct()
     {
         $this->pluginProperties = array();
+        $this->playlistTracks = new ArrayCollection();
     }
+
+
+    public static function createFromTrackResult(TrackResult $trackResult)
+    {
+            $song = new self();
+            $song->setArtist($trackResult->getArtist());
+            $song->setTitle($trackResult->getTitle());
+            $song->setTag($trackResult->getTag());
+            $song->setEntryId($trackResult->getEntryId());
+            $song->setDuration($trackResult->getDuration());
+            $song->setPluginProperties($trackResult->getPluginProperties());
+            $song->setIcon($trackResult->getIcon());
+            $song->setShareable($trackResult->getShareable());
+            $song->setThumbnails($trackResult->getThumbnails());
+            return $song;
+    }
+
     public function getId()
     {
         return $this->id;
@@ -154,7 +172,7 @@ class TrackResult
     public function setArtist($artist)
     {
 
-         $this->artist = $artist;
+        $this->artist = $artist;
 
     }
 
@@ -166,36 +184,6 @@ class TrackResult
     public function setThumbnails($thumbnails)
     {
         $this->thumbnails = $thumbnails;
-    }
-
-    public function getPlaylist()
-    {
-        return $this->playlist;
-    }
-
-    public function setPlaylist($playlist)
-    {
-        $this->playlist = $playlist;
-    }
-
-    public function getOrder()
-    {
-        return $this->order;
-    }
-
-    public function setOrder($order)
-    {
-        $this->order = $order;
-    }
-
-    public function incOrder()
-    {
-        $this->order++;
-    }
-
-    public function decOrder()
-    {
-        $this->order--;
     }
 
     public function getTag()
@@ -250,43 +238,21 @@ class TrackResult
         $this->shareable = $shareable;
     }
 
-    /**
-     * @ORM\PreRemove
-     */
-    public function onPreRemove()
-    {
-        if ($this->shareable == true && $this->oldShareableValue == null ) {
-            $this->playlist->decTrackCount();
-        }
+    public function __toString(){
+        return trim($this->getArtist()).' '.$this->title;
     }
 
-    /**
-     * @ORM\PrePersist
-     */
-    public function onPrePresist()
+    public function getArtistAndTitle($separator=' ')
     {
-
-        if ($this->shareable) {
-
-            $this->playlist->incTrackCount();
-        }
-
+        return trim($this->artist.$separator.$this->title);
     }
 
-    /**
-     * @ORM\PreUpdate
-     */
-    public function onPreUpdate()
-    {
-
-        /*if ($this->oldShareableValue != null
-                && $this->shareable != $this->oldShareableValue) {
-            if ($this->shareable) {
-                $this->playlist->incTrackCount();
-            } else {
-                $this->playlist->decTrackCount();
-            }
-        }*/
+    public function getDuration() {
+        return $this->duration;
+    }
+    public function setDuration($duration) {
+        $this->duration = $duration;
+        return $this;
     }
 
     public function getOldShareableValue()
@@ -297,24 +263,26 @@ class TrackResult
     public function setOldShareableValue($oldShareableValue)
     {
         $this->oldShareableValue = $oldShareableValue;
+        return $this;
     }
 
-    public function __toString(){
-    	return trim($this->getArtist()).' '.$this->title;
-    }
-
-    public function getArtistAndTitle($separator=' ')
+    public function getPlaylistTracks()
     {
-        return trim($this->artist.$separator.$this->title);
+        return $this->playlistTracks;
     }
 
-	public function getDuration() {
-		return $this->duration;
-	}
-	public function setDuration($duration) {
-		$this->duration = $duration;
-		return $this;
-	}
+    public function setPlaylistTracks($playlistTracks)
+    {
+        $this->playlistTracks = $playlistTracks;
+        return $this;
+    }
+
+    public function addPlaylistTrack(PlaylistTrack $playlistTrack)
+    {
+        $playlistTrack->setSong($this);
+        $this->playlistTracks->add($playlistTrack);
+
+    }
 
 
 }
