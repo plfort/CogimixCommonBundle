@@ -113,7 +113,7 @@ class User extends BaseUser
     private $playedTracks;
 
     /**
-     * @ORM\Column(type="bigint")
+     * @ORM\Column(type="bigint",nullable=true)
      * @var int
      */
     protected $facebookId;

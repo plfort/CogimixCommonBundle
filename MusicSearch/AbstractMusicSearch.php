@@ -7,6 +7,8 @@ use Cogipix\CogimixCommonBundle\Plugin\PluginInterface;
 use Cogipix\CogimixCommonBundle\Utils\LoggerAwareInterface;
 
 use Cogipix\CogimixCommonBundle\Model\SearchQuery;
+use Cogipix\CogimixBundle\Manager\SongManager;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
  *
@@ -23,11 +25,18 @@ abstract class AbstractMusicSearch implements PluginInterface,
     protected $searchQuery;
     protected $logger;
 
+
     /**
      *
      * @var CacheManager $cacheManager
      */
     protected $cacheManager;
+
+    /**
+     *
+     * @var SongManager $songManager
+     */
+    protected $songManager;
 
     abstract protected function buildQuery();
     abstract protected function parseResponse($response);
@@ -65,10 +74,10 @@ abstract class AbstractMusicSearch implements PluginInterface,
 
     public function searchMusic(SearchQuery $search)
     {
-        $this->logger->debug('Search music in ' . get_class($this));
+
         $this->searchQuery = $search;
         $resultTag = $this->getResultTag();
-        if (null != $this->cacheManager) {
+        if (null == $this->cacheManager) {
             $cacheResults = $this->cacheManager
                     ->getCacheResults($search->getSongQuery(), $resultTag);
             if (!empty($cacheResults)) {
@@ -77,17 +86,21 @@ abstract class AbstractMusicSearch implements PluginInterface,
             } else {
                 $this->buildQuery();
                 $results = $this->executeQuery();
+
                 if(!empty($results)){
+                    $this->songManager->insertIngoreTracks($results);
                 	$this->cacheManager
                 	->insertCacheResult($search->getSongQuery(),
-                			$resultTag, $results);
+                			$resultTag, []);
                 }
 
                 return $results;
             }
         } else {
             $this->buildQuery();
-            return $this->executeQuery();
+            $results = $this->executeQuery();
+            return $this->songManager->insertAndGetTracks($results);
+            //return $results;
         }
     }
 
@@ -113,5 +126,9 @@ abstract class AbstractMusicSearch implements PluginInterface,
         $this->cacheManager = $cacheManager;
     }
 
+    public function setSongManager(SongManager $songManager)
+    {
+        $this->songManager = $songManager;
+    }
 
 }

@@ -59,6 +59,8 @@ class TrackResult
      * @JMSSerializer\Exclude()
      */
     protected $playlist;
+
+
     /**
      * @ORM\Column(type="string")
      * @JMSSerializer\Groups({"export","playlist_detail"})
