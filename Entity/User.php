@@ -112,12 +112,6 @@ class User extends BaseUser
      */
     private $playedTracks;
 
-    /**
-     * @ORM\Column(type="bigint")
-     * @var int
-     */
-    protected $facebookId;
-
     public function __construct()
     {
         parent::__construct();
@@ -273,18 +267,6 @@ class User extends BaseUser
         $this->acceptNews = $acceptNews;
         return $this;
     }
-
-    public function getFacebookId()
-    {
-        return $this->facebookId;
-    }
-
-    public function setFacebookId($facebookId)
-    {
-        $this->facebookId = $facebookId;
-        return $this;
-    }
-
 
 
 

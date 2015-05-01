@@ -13,7 +13,7 @@ use JMS\Serializer\Annotation as JMSSerializer;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-abstract class SuggestedItem
+class SuggestedItem
 {
     /**
      * @ORM\Id
