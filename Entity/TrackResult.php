@@ -47,7 +47,7 @@ class TrackResult
      */
     protected $entryId;
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      * @JMSSerializer\Groups({"export","playlist_detail"})
      * @var unknown_type
      */
