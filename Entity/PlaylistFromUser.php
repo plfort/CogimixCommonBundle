@@ -1,6 +1,5 @@
 <?php
 namespace Cogipix\CogimixCommonBundle\Entity;
-use Cogipix\CogimixCommonBundle\Entity\TrackResult;
 
 class PlaylistFromUser extends Playlist
 {

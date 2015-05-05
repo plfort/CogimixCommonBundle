@@ -62,7 +62,14 @@ class BulkMusicSearch implements LoggerAwareInterface
 
             // calculate the distance between the input word,
             // and the current word
-            $distance = $this->comparator->distance($songString, $track->getArtistAndTitle(), false);
+            if(is_array($track)){
+                $artistTitle = (isset($track['artist'])?isset($track['artist']):'').' '.(isset($track['title'])?isset($track['title']):'');
+            }else{
+                $artistTitle = $track->getArtistAndTitle();
+            }
+
+
+            $distance = $this->comparator->distance($songString, $artistTitle, false);
 
             // check for an exact match
             if ($distance == 0) {

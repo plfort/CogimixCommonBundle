@@ -12,6 +12,9 @@
 			<call method="setCacheManager">
 				<argument type="service" id="cogimix.cache_manager" />
 			</call>
+			<call method="setSongManager">
+				<argument type="service" id="cogimix.song_manager" />
+			</call>
 		</service>
 		
 		<service id="cogimix.plugin_provider"

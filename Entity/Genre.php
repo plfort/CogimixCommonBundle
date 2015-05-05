@@ -13,7 +13,7 @@ class Genre
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     *  @JMSSerializer\ReadOnly()
+     * @JMSSerializer\ReadOnly()
      */
     private $id;
 
@@ -23,14 +23,25 @@ class Genre
      */
     protected $name;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @var unknown
+     */
+    protected $confirmed;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $createDate;
+
+    public function __construct()
+    {
+        $this->createDate = new \DateTime();
+    }
+
     public function getId()
     {
         return $this->id;
-    }
-
-    public function setId($id)
-    {
-        $this->id = $id;
     }
 
     public function getName()
@@ -42,5 +53,29 @@ class Genre
     {
         $this->name = $name;
     }
+
+    public function getConfirmed()
+    {
+        return $this->confirmed;
+    }
+
+    public function setConfirmed($confirmed)
+    {
+        $this->confirmed = $confirmed;
+        return $this;
+    }
+
+    public function getCreateDate()
+    {
+        return $this->createDate;
+    }
+
+    public function setCreateDate($createDate)
+    {
+        $this->createDate = $createDate;
+        return $this;
+    }
+
+
 
 }

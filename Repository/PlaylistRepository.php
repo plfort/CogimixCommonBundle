@@ -33,14 +33,18 @@ class PlaylistRepository extends EntityRepository{
     public function getSharedPlaylist($playlistId,$currentUser){
 
         $qb= $this->createQueryBuilder('p');
-        $qb->select('distinct p,u');
+        $qb->select('distinct p');
+        $qb->addSelect('playlistTracks,song')
+        ->leftJoin('p.playlistTracks','playlistTracks')
+        ->leftJoin('playlistTracks.song','song');
         $qb->join('p.user','u');
         $qb->leftJoin('u.listeners','ml');
         $qb->where('p.id = :id AND (u = :currentUser OR p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1))');
         $qb->andWhere('u.id NOT IN (SELECT u2.id FROM CogimixCommonBundle:User u2 LEFT JOIN u2.myListenings listenings LEFT JOIN u2.listeners listeners WHERE  (listeners.fromUser = :currentUser AND listeners.accepted = 0) OR (listenings.toUser = :currentUser AND listenings.accepted = 0))');
+
         $qb->setParameter('id',$playlistId);
         $qb->setParameter('currentUser',$currentUser);
-        
+
         $query=$qb->getQuery();
         $query->useQueryCache(true);
 
@@ -81,7 +85,7 @@ class PlaylistRepository extends EntityRepository{
        return $query->getResult();
     }
 
-    
+
     public function getUserFavoritePlaylists($user)
     {
          $qb= $this->createQueryBuilder('p')
@@ -89,7 +93,7 @@ class PlaylistRepository extends EntityRepository{
          ->join('p.fans', 'fan',Join::WITH,'fan.id  = :userId')
          ->join('p.user','owner')
          ->setParameter('userId', $user->getId());
-         
+
          $query=$qb->getQuery();
          $query->useQueryCache(true);
          //$query->useResultCache(true,600);

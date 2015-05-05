@@ -19,6 +19,17 @@ class CacheManager extends AbstractManager{
         $this->serializer=$serializer;
     }
 
+    public function getFreshTagsForQuery($query,$serviceTags)
+    {
+        $qb= $this->em->createQueryBuilder();
+        $qb->select('DISTINCT(c.tag)')
+        ->from('CogimixCommonBundle:CacheResults','c')
+        ->where('c.query = :query AND c.tag IN (:tags) AND c.expireDate > :now')
+        ->setParameters(array('query'=>$query,'tags'=>$serviceTags,'now'=>new \DateTime()));
+        $query = $qb->getQuery();
+        return array_column($query->getScalarResult(),1);
+    }
+
     /**
      *
      * @param string $query
@@ -38,7 +49,7 @@ class CacheManager extends AbstractManager{
             try{
                $cacheResult= $query->getSingleResult();
               return $this->serializer->deserialize($cacheResult->getResults(),
-                       'ArrayCollection<Cogipix\CogimixCommonBundle\Entity\TrackResult>',
+                       'ArrayCollection<Cogipix\CogimixCommonBundle\Entity\Song>',
                        'json');
 
             }catch(NoResultException $ex){
@@ -49,6 +60,39 @@ class CacheManager extends AbstractManager{
             }
         }
         return null;
+    }
+
+    public function insertSimpleCacheResult($query,$tag, $results,$cachePeriodMinute=600)
+    {
+
+    }
+
+    protected function createOrUpdateCacheResult($query,$tag, $results,$cachePeriodMinute=600)
+    {
+        $expireDate= new \DateTime();
+        $expireDate->add(new \DateInterval(sprintf("PT%dM",$cachePeriodMinute)));
+        try{
+            $qb= $this->em->createQueryBuilder();
+            $queryDb=$qb->select('c')
+            ->from('CogimixCommonBundle:CacheResults','c')
+            ->where('c.query = :query AND c.tag = :tag')
+            ->setParameters(array('query'=>$query,'tag'=>$tag))
+            ->setMaxResults(1)->getQuery();
+            $queryDb->useQueryCache(true);
+            $cacheResult= $queryDb->getSingleResult();
+
+        }catch(NoResultException $ex){
+            $cacheResult = new CacheResults($query, $tag, $expireDate);
+        }
+
+        try{
+            $cacheResult->setExpireDate($expireDate);
+            $cacheResult->setResults($this->serializer->serialize($results,'json'));
+            $this->em->persist($cacheResult);
+            $this->em->flush();
+        }catch (\Exception $ex){
+            $this->logger->err($ex->getMessage());
+        }
     }
 
     public function insertCacheResult($query,$tag, $results,$cachePeriodMinute=600){
@@ -63,7 +107,7 @@ class CacheManager extends AbstractManager{
                 ->setParameters(array('query'=>$query,'tag'=>$tag))
                 ->setMaxResults(1)->getQuery();
                 $queryDb->useQueryCache(true);
-                $cacheResult= $queryDb->getSingleResult();;
+                $cacheResult= $queryDb->getSingleResult();
 
             }catch(NoResultException $ex){
                  $cacheResult = new CacheResults($query, $tag, $expireDate);
