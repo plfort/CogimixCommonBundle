@@ -61,9 +61,16 @@ abstract class AbstractMusicSearch implements PluginInterface,
             } else {
 
                 $results = $this->executePopularQuery();
-                $this->cacheManager
+                if($results){
+                    $results = $this->songManager->insertAndGetSongs($results);
+                    $this->cacheManager
+                    ->insertCacheResult($this->popularKeyword,
+                        $resultTag, []);
+                }
+
+                /*$this->cacheManager
                         ->insertCacheResult($this->popularKeyword,
-                                $resultTag, $results);
+                                $resultTag, $results);*/
                 return $results;
             }
         } else {
@@ -88,7 +95,7 @@ abstract class AbstractMusicSearch implements PluginInterface,
                 $results = $this->executeQuery();
 
                 if(!empty($results)){
-                    $this->songManager->insertIngoreTracks($results);
+                    $results = $this->songManager->insertAndGetSongs($results);
                 	$this->cacheManager
                 	->insertCacheResult($search->getSongQuery(),
                 			$resultTag, []);
@@ -99,8 +106,7 @@ abstract class AbstractMusicSearch implements PluginInterface,
         } else {
             $this->buildQuery();
             $results = $this->executeQuery();
-            return $this->songManager->insertAndGetTracks($results);
-            //return $results;
+            return $this->songManager->insertAndGetSongs($results);
         }
     }
 

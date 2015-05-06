@@ -48,12 +48,15 @@ class SuggestedTrackRepository extends EntityRepository{
     
     
     public function getSuggestedTracksToUser($toUser,$onlyUnread){
-        $qb= $this->createQueryBuilder('t');
-        $qb->select('t','u.username','u.id','s.id sid','s.readed readed');
-        $qb->join('t.suggestions','s');
-        $qb->join('s.listener','l');
-        $qb->join('l.fromUser','u');
-        $qb->andWhere('l.toUser = :toUser');
+        $qb= $this->_em->createQueryBuilder()
+
+        ->select('NEW Cogipix\CogimixCommonBundle\Entity\SongFromUser(song.id,song.artist,song.title,song.tag,song.entryId,song.thumbnails,song.icon,song.pluginProperties,song.shareable, song.duration,u.username,u.id,s.id,s.readed)')
+        ->from('CogimixCommonBundle:SuggestedTrack','t')
+        ->join('t.suggestions','s')
+        ->join('CogimixCommonBundle:Song','song',Join::WITH,'t.song = song')
+        ->join('s.listener','l')
+        ->join('l.fromUser','u')
+        ->andWhere('l.toUser = :toUser');
         $qb->setParameter('toUser', $toUser->getId());
         $qb->orderBy('s.createDate','DESC');
         if($onlyUnread == true){
@@ -61,7 +64,7 @@ class SuggestedTrackRepository extends EntityRepository{
         }
         $query=$qb->getQuery();
         $query->useQueryCache(true);
-        return $query->getResult(Query::HYDRATE_ARRAY);
+        return $query->getResult();
     }
 
 

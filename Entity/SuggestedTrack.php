@@ -24,10 +24,16 @@ class SuggestedTrack extends SuggestedItem
     protected $entryId;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text",nullable=true)
      * @var unknown_type
      */
     protected $result;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\Song")
+     * @var Song
+     */
+    protected $song;
 
     public function getTag()
     {
@@ -51,7 +57,10 @@ class SuggestedTrack extends SuggestedItem
 
     public function getResult()
     {
-        return gzuncompress(base64_decode($this->result));
+        if($this->result){
+            return gzuncompress(base64_decode($this->result));
+        }
+        return null;
 
     }
 
@@ -60,5 +69,24 @@ class SuggestedTrack extends SuggestedItem
         //$this->results = $results;
         $this->result = base64_encode(gzcompress($result, 9));
     }
+
+    /**
+     * @return Song
+     */
+    public function getSong()
+    {
+        return $this->song;
+    }
+
+    /**
+     * @param Song $song
+     */
+    public function setSong($song)
+    {
+        $this->song = $song;
+    }
+
+
+
 
 }

@@ -17,7 +17,7 @@
 			</call>
 		</service>
 		
-		<service id="cogimix.plugin_provider"
+		<service id="cogimix.plugin_provider" lazy="true"
 			class="Cogipix\CogimixCommonBundle\Plugin\PluginProvider"></service>
 
 		<service id="cogimix.playlist_renderer"

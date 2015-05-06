@@ -16,35 +16,12 @@ class PlayedTrack
      */
     protected $id;
 
-    /**
-     *  @ORM\Column(type="string")
-     * @var unknown
-     */
-    protected $artist;
 
     /**
-     *  @ORM\Column(type="string")
-     * @var unknown
+     * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\Song",inversedBy="playedTracks")
+     * @var Song
      */
-    protected $title;
-
-    /**
-     * @ORM\Column(name="duration", type="integer", nullable=false)
-     * @var unknown
-     */
-    protected $duration=0;
-
-    /**
-     * @ORM\Column(type="string")
-     * @var unknown
-     */
-    protected $serviceTag;
-
-    /**
-     * @ORM\Column(type="string")
-     * @var unknown_type
-     */
-    protected $entryId;
+    protected $song;
 
     /**
      * @ORM\ManyToOne(targetEntity="User",inversedBy="playedTracks")
@@ -189,6 +166,22 @@ class PlayedTrack
     {
         $this->resumeDate = $resumeDate;
         return $this;
+    }
+
+    /**
+     * @return Song
+     */
+    public function getSong()
+    {
+        return $this->song;
+    }
+
+    /**
+     * @param Song $song
+     */
+    public function setSong($song)
+    {
+        $this->song = $song;
     }
 
 

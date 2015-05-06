@@ -47,13 +47,6 @@ class Playlist
      */
     protected $shortDescription;
 
-    /**
-     *
-     * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\TrackResult",indexBy="order", mappedBy="playlist",cascade={"persist","remove"})
-     * @ORM\OrderBy({"order" = "ASC"})
-     * @var array
-     */
-   // protected $tracks;
 
     /**
      * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\PlaylistTrack",indexBy="order", mappedBy="playlist",cascade={"persist","remove"})

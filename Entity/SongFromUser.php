@@ -1,10 +1,8 @@
 <?php
 namespace Cogipix\CogimixCommonBundle\Entity;
-use Cogipix\CogimixCommonBundle\Entity\TrackResult;
 
-class TrackFromUser extends TrackResult
+class SongFromUser extends Song
 {
-
     protected $uid;
 
     protected $username;
@@ -12,6 +10,28 @@ class TrackFromUser extends TrackResult
     protected $sid;
 
     protected $readed;
+
+
+    public function __construct($songId,$artist,$title,$tag,$entryId,$thumbnails,$icon,$pluginProperties,$shareable,$duration,$username,$uId,$sId,$readed)
+    {
+        $this->setId($songId);
+        $this->setArtist($artist);
+        $this->setTitle($title);
+        $this->setTag($tag);
+        $this->setEntryId($entryId);
+        $this->setThumbnails($thumbnails);
+        $this->setDuration($duration);
+        $this->setIcon($icon);
+        $this->setShareable($shareable);
+        $this->setPluginProperties($pluginProperties);
+
+
+        $this->setSid($sId); // suggestion id
+        $this->setReaded($readed);
+        $this->setUid($uId);
+        $this->setUsername($username);
+    }
+
 
     public function getUid()
     {

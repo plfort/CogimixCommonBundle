@@ -1,6 +1,7 @@
 <?php
 namespace Cogipix\CogimixCommonBundle\Entity;
 
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use JMS\Serializer\Annotation as JMSSerializer;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -20,6 +21,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class Song
 {
+    use TimestampableEntity;
 
     /**
      * @ORM\Column(name="id", type="integer", nullable=false)
@@ -103,32 +105,29 @@ class Song
     protected $duration = 180;
 
     /**
+     * @JMSSerializer\Exclude()
      * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\PlaylistTrack",indexBy="order", mappedBy="song",cascade={"persist","remove"})
-     * @var ArrayCollection()
+     * @var ArrayCollection
      */
     protected $playlistTracks;
+
+    /**
+     * @JMSSerializer\Exclude()
+     * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\PlayedTrack",mappedBy="song")
+     *
+     * @var ArrayCollection<PlayedTrack>
+     */
+    protected $playedTracks;
+
 
     public function __construct()
     {
         $this->pluginProperties = array();
         $this->playlistTracks = new ArrayCollection();
+        $this->playedTracks = new ArrayCollection();
     }
 
 
-    public static function createFromTrackResult(TrackResult $trackResult)
-    {
-            $song = new self();
-            $song->setArtist($trackResult->getArtist());
-            $song->setTitle($trackResult->getTitle());
-            $song->setTag($trackResult->getTag());
-            $song->setEntryId($trackResult->getEntryId());
-            $song->setDuration($trackResult->getDuration());
-            $song->setPluginProperties($trackResult->getPluginProperties());
-            $song->setIcon($trackResult->getIcon());
-            $song->setShareable($trackResult->getShareable());
-            $song->setThumbnails($trackResult->getThumbnails());
-            return $song;
-    }
 
     public function getId()
     {
@@ -283,9 +282,26 @@ class Song
     public function addPlaylistTrack(PlaylistTrack $playlistTrack)
     {
         $playlistTrack->setSong($this);
-        $this->playlistTracks->add($playlistTrack);
+       // $this->playlistTracks->add($playlistTrack);
 
     }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getPlayedTracks()
+    {
+        return $this->playedTracks;
+    }
+
+    /**
+     * @param ArrayCollection $playedTracks
+     */
+    public function setPlayedTracks($playedTracks)
+    {
+        $this->playedTracks = $playedTracks;
+    }
+
 
 
 }
