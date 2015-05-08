@@ -15,6 +15,9 @@
 			<call method="setSongManager">
 				<argument type="service" id="cogimix.song_manager" />
 			</call>
+            <call method="setStopWatch">
+                <argument type="service" id="debug.stopwatch" on-invalid="null" />
+            </call>
 		</service>
 		
 		<service id="cogimix.plugin_provider" lazy="true"

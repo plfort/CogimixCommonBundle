@@ -30,8 +30,8 @@ class CosineSimilarityComparator implements ComparatorInterface
         $setOrigin = $this->normalize($switch);
         usort($array, function ($a, $b) use($setOrigin) {
 
-            $simA = $this->distance($setOrigin, $this->normalize($a->__toString()));
-            $simB = $this->distance($setOrigin, $this->normalize($b->__toString()));
+            $simA = $this->distance($setOrigin, $this->normalize($a->getArtist().' '.$a->getTitle()));
+            $simB = $this->distance($setOrigin, $this->normalize($b->getArtist().' '.$b->getTitle()));
 
             if ($simA == $simB) {
                 return 0; // equality

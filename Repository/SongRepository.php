@@ -11,16 +11,28 @@ class SongRepository extends EntityRepository{
 
     public function findSongFullText(SearchQuery $query,$tag)
     {
-        return $this->createQueryBuilder('s')
-        ->addSelect('MATCH_AGAINST(s.title,s.artist, :query) as HIDDEN score')
-        ->andWhere('s.tag = :tag')
-        ->andWhere('MATCH_AGAINST(s.title,s.artist, :query) > 0.8')
+        $keywordList =  explode(' ',$query->getSongQuery());
+        $keywordList = array_filter($keywordList,function($item){
+          return mb_strlen($item)>2;
+        });
+
+        //$keywords = '+'.join(" +",$keywordList);
+        $keywords = join(" ",$keywordList);
+
+        $songs =  $this->createQueryBuilder('s')
+        ->addSelect("MATCH_AGAINST(s.title,s.artist, :keywords 'IN BOOLEAN MODE') as HIDDEN score")
+            ->addSelect('length(:query)/length(CONCAT(s.title,s.artist)) as HIDDEN lengthRatio')
+            ->andWhere('s.tag = :tag')
+        ->andWhere("MATCH_AGAINST(s.title,s.artist, :keywords 'IN BOOLEAN MODE') > 0")
         ->setParameter('query', $query->getSongQuery())
+            ->setParameter('keywords',$keywords)
         ->setParameter('tag', $tag)
-        ->orderBy('score','DESC')
+        ->orderBy('score','DESC')->orderBy('lengthRatio','ASC')
         ->setMaxResults(50)
         ->getQuery()
-        ->getArrayResult();
+        ->getResult();
+
+
     }
 
     public function getPlaylistShareableTracks($playlistId)
@@ -69,7 +81,7 @@ class SongRepository extends EntityRepository{
     public function getSongsByTagAndEntryId($keys)
     {
         $qb =$this->getSongsByTagAndEntryIdQB($keys);
-        return $qb->getQuery()->getArrayResult();
+        return $qb->getQuery()->getResult();
     }
 
 

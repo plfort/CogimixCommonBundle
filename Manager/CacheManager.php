@@ -21,11 +21,22 @@ class CacheManager extends AbstractManager{
 
     public function getFreshTagsForQuery($query,$serviceTags)
     {
+        $keywordList =  explode(' ',$query);
+        $keywordList = array_filter($keywordList,function($item){
+            return mb_strlen($item)>2;
+        });
+        $keywords = '+'.join(" +",$keywordList);
+        $keywords = join(" ",$keywordList);
+
         $qb= $this->em->createQueryBuilder();
         $qb->select('DISTINCT(c.tag)')
-        ->from('CogimixCommonBundle:CacheResults','c')
-        ->where('c.query = :query AND c.tag IN (:tags) AND c.expireDate > :now')
-        ->setParameters(array('query'=>$query,'tags'=>$serviceTags,'now'=>new \DateTime()));
+            ->addSelect("MATCH_AGAINST(c.query, :keywords 'IN BOOLEAN MODE') as HIDDEN score")
+            ->addSelect('length(:query)/length(c.query) as HIDDEN lengthRatio')
+            ->from('CogimixCommonBundle:CacheResults','c')
+            ->where("MATCH_AGAINST(c.query, :keywords 'IN BOOLEAN MODE') > 0 AND c.tag IN (:tags) AND c.expireDate > :now")
+
+            ->orderBy('score','DESC')->orderBy('lengthRatio','ASC')
+            ->setParameters(array('query'=>$query, 'keywords'=>$keywords,'tags'=>$serviceTags,'now'=>new \DateTime()));
         $query = $qb->getQuery();
         return array_column($query->getScalarResult(),1);
     }
@@ -96,7 +107,7 @@ class CacheManager extends AbstractManager{
     }
 
     public function insertCacheResult($query,$tag, $results,$cachePeriodMinute=600){
-        if(!empty($results) && is_int($cachePeriodMinute) && $cachePeriodMinute!=0){
+        if(is_int($cachePeriodMinute) && $cachePeriodMinute!=0){
             $expireDate= new \DateTime();
             $expireDate->add(new \DateInterval(sprintf("PT%dM",$cachePeriodMinute)));
             try{

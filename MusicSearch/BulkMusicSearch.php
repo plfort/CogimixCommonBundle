@@ -23,9 +23,11 @@ class BulkMusicSearch implements LoggerAwareInterface
 
     public function bulkSearchAndGuess(array $songQueries)
     {
+
         $results = array();
-        $bulkResults = $this->bulkSearch($songQueries,1);
+        $bulkResults = $this->bulkSearch($songQueries);
         foreach ($bulkResults as $bulkResult) {
+
             $levResult = $this->guessBestSong($bulkResult->getSearchQuery(), $bulkResult->getSearchResults());
             if ($levResult['element'] != null) {
                 $results[] = $levResult['element'];

@@ -5,7 +5,12 @@ namespace Cogipix\CogimixCommonBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="cache_results",indexes={@ORM\Index(name="search_query_idx", columns={"query", "tag"})})
+ * @ORM\Table(name="cache_results",
+ * indexes={
+ * @ORM\Index(name="search_query_idx", columns={"query", "tag"}),
+ * @ORM\Index(name="query_fulltxt", columns={"query"},flags="fulltext")
+ *
+ * })
  * @ORM\Entity
  */
 class CacheResults
@@ -20,13 +25,13 @@ class CacheResults
 
     /**
      * @ORM\Column(type="string")
-     * @var unknown_type
+     * @var string
      */
     protected $query;
 
     /**
      * @ORM\Column(type="string")
-     * @var unknown_type
+     * @var string
      */
     protected $tag;
 
