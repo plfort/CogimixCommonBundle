@@ -193,7 +193,7 @@ class Playlist
         $this->user = $user;
     }
 
-    public function getTrack($order)
+    public function getPlaylistTrack($order)
     {
         if (!isset($this->playlistTracks[$order])) {
             throw new \InvalidArgumentException(

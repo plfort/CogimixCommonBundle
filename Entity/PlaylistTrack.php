@@ -104,6 +104,9 @@ class PlaylistTrack
         return $this->id;
     }
 
+    /**
+     * @return Playlist
+     */
     public function getPlaylist()
     {
         return $this->playlist;

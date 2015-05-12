@@ -34,7 +34,7 @@
 			</call>
 
 	
-			<tag name="securitycontext_aware" />
+			<tag name="tokenstorage_aware" />
 			<tag name="logger_aware" />
 		</service>
 		

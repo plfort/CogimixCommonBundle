@@ -14,6 +14,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Index(name="song_fulltxt", columns={"artist","title"},flags="fulltext")
  * })
  * @JMSSerializer\AccessType("public_method")
+ * @JMSSerializer\ExclusionPolicy("all")
  * @ORM\Entity(repositoryClass="Cogipix\CogimixCommonBundle\Repository\SongRepository")
  * @UniqueEntity(fields="tag,entryId")
  * @author plfort - Cogipix
@@ -27,18 +28,21 @@ class Song
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"playlist_detail"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string")
+     * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"export","playlist_detail"})
      * @var unknown_type
      */
     protected $title;
     /**
      * @ORM\Column(type="string")
+     * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"export","playlist_detail"})
      * @var unknown_type
      */
@@ -46,6 +50,7 @@ class Song
 
     /**
      * @ORM\Column(type="string")
+     * @JMSSerializer\Expose()
      * @JMSSerializer\SerializedName("entryId")
      * @JMSSerializer\Groups({"export","playlist_detail"})
      * @var unknown_type
@@ -54,6 +59,7 @@ class Song
 
     /**
      * @ORM\Column(type="string")
+     * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"export","playlist_detail"})
      * @var unknown_type
      */
@@ -62,6 +68,7 @@ class Song
     /**
      *
      * @ORM\Column(type="array")
+     * @JMSSerializer\Expose()
      * @JMSSerializer\SerializedName("pluginProperties")
      * @JMSSerializer\Groups({"playlist_detail"})
      * @var array $pluginProperties
@@ -70,6 +77,7 @@ class Song
 
     /**
      * @ORM\Column(type="string")
+     * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"export","playlist_detail"})
      * @var unknown_type
      */
@@ -77,20 +85,21 @@ class Song
 
     /**
      * @ORM\Column(type="string",nullable=true)
-     * @JMSSerializer\Exclude()
+     *
      * @var unknown_type
      */
     protected $icon;
 
     /**
      * @ORM\Column(type="boolean")
+     * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"playlist_detail"})
      * @var unknown_type
      */
     protected $shareable = true;
 
     /**
-     * @JMSSerializer\Exclude()
+     *
      * @var unknown_type
      */
     protected $oldShareableValue = null;
@@ -100,19 +109,20 @@ class Song
      * Duration in seconds
      * @var int
      * @ORM\Column(name="duration", type="integer", nullable=false)
+     * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"playlist_detail"})
      */
     protected $duration = 180;
 
     /**
-     * @JMSSerializer\Exclude()
+     *
      * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\PlaylistTrack",indexBy="order", mappedBy="song",cascade={"persist","remove"})
      * @var ArrayCollection
      */
     protected $playlistTracks;
 
     /**
-     * @JMSSerializer\Exclude()
+     *
      * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\PlayedTrack",mappedBy="song")
      *
      * @var ArrayCollection<PlayedTrack>

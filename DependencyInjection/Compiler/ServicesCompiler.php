@@ -72,12 +72,12 @@ class ServicesCompiler implements CompilerPassInterface
             ));
         }
         
-        $securityContextAwareServices = $container->findTaggedServiceIds('securitycontext_aware');
-        $securityContextReference = new Reference('security.context');
-        foreach ($securityContextAwareServices as $id => $tagAttributes) {
+        $tokenStorageAwareServices = $container->findTaggedServiceIds('tokenstorage_aware');
+        $tokenStorageReference = new Reference('security.token_storage');
+        foreach ($tokenStorageAwareServices as $id => $tagAttributes) {
             $serviceDefinition = $container->findDefinition($id);
-            $serviceDefinition->addMethodCall('setSecurityContext', array(
-                $securityContextReference
+            $serviceDefinition->addMethodCall('setTokenStorage', array(
+                $tokenStorageReference
             ));
         }
         // playlist view hook

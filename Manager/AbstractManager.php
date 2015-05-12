@@ -2,19 +2,18 @@
 namespace Cogipix\CogimixCommonBundle\Manager;
 use Doctrine\ORM\EntityManager;
 
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Cogipix\CogimixCommonBundle\Utils\SecurityContextAwareInterface;
+use Cogipix\CogimixCommonBundle\Utils\TokenStorageAwareInterface;
 
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 use Cogipix\CogimixCommonBundle\Utils\LoggerAwareInterface;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Monolog\Logger;
 
 
-abstract class AbstractManager implements LoggerAwareInterface,SecurityContextAwareInterface {
+abstract class AbstractManager implements LoggerAwareInterface,TokenStorageAwareInterface {
     /**
      *
      * @var EntityManager $em
@@ -28,9 +27,9 @@ abstract class AbstractManager implements LoggerAwareInterface,SecurityContextAw
     protected $logger;
      /**
       *
-      * @var SecurityContextInterface $securityContext
+      * @var TokenStorageInterface $tokenStorage
       */
-    protected $securityContext;
+    protected $tokenStorage;
 
 
     public function setObjectManager(EntityManager $om){
@@ -41,12 +40,12 @@ abstract class AbstractManager implements LoggerAwareInterface,SecurityContextAw
         $this->logger=$logger;
     }
 
-    public function setSecurityContext(SecurityContextInterface $securityContext){
-        $this->securityContext=$securityContext;
+    public function setTokenStorage(TokenStorageInterface $tokenStorageInterface){
+        $this->tokenStorage=$tokenStorageInterface;
     }
 
     protected function getCurrentUser() {
-        $user = $this->securityContext->getToken()->getUser();
+        $user = $this->tokenStorage->getToken()->getUser();
         if ($user instanceof AdvancedUserInterface)
             return $user;
         return null;

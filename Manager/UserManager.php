@@ -4,7 +4,7 @@ use Cogipix\CogimixCommonBundle\Entity\Listener;
 
 use Cogipix\CogimixCommonBundle\Entity\User;
 
-use Cogipix\CogimixCommonBundle\Utils\SecurityContextAwareInterface;
+use Cogipix\CogimixCommonBundle\Utils\TokenStorageAwareInterface;
 
 use Cogipix\CogimixCommonBundle\Manager\AbstractManager;
 

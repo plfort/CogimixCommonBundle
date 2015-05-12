@@ -2,7 +2,6 @@
 namespace Cogipix\CogimixCommonBundle\Plugin;
 
 
-use Symfony\Component\Security\Core\SecurityContextInterface;
 
 class PluginProvider implements PluginProviderInterface{
 

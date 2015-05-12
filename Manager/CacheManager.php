@@ -26,7 +26,7 @@ class CacheManager extends AbstractManager{
             return mb_strlen($item)>2;
         });
         $keywords = '+'.join(" +",$keywordList);
-        $keywords = join(" ",$keywordList);
+        //$keywords = join(" ",$keywordList);
 
         $qb= $this->em->createQueryBuilder();
         $qb->select('DISTINCT(c.tag)')

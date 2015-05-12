@@ -16,10 +16,10 @@ class SongRepository extends EntityRepository{
           return mb_strlen($item)>2;
         });
 
-        //$keywords = '+'.join(" +",$keywordList);
-        $keywords = join(" ",$keywordList);
+        $keywords = '+'.join(" +",$keywordList);
+        //$keywords = join(" ",$keywordList);
 
-        $songs =  $this->createQueryBuilder('s')
+        return  $this->createQueryBuilder('s')
         ->addSelect("MATCH_AGAINST(s.title,s.artist, :keywords 'IN BOOLEAN MODE') as HIDDEN score")
             ->addSelect('length(:query)/length(CONCAT(s.title,s.artist)) as HIDDEN lengthRatio')
             ->andWhere('s.tag = :tag')
@@ -35,18 +35,28 @@ class SongRepository extends EntityRepository{
 
     }
 
+
     public function getPlaylistShareableTracks($playlistId)
     {
-        $qb = $this->createQueryBuilder('s');
-        $qb->select('s');
-        $qb->join('s.playlistTracks', 'pt', Join::WITH, 'pt.playlist = :playlistId');
-        $qb->andWhere('s.shareable > :playlist_not_shared');
-        $qb->setParameter('playlistId', $playlistId);
-        $qb->setParameter('playlist_not_shared', PlaylistConstant::NOT_SHARED);
-        $qb->orderBy('pt.order','ASC');
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('p,s')
+        ->from('CogimixCommonBundle:PlaylistTrack','p')
+        ->join('p.song', 's')
+        ->andWhere('p.playlist = :playlistId AND s.shareable > :playlist_not_shared')
+        ->setParameter('playlistId', $playlistId)
+        ->setParameter('playlist_not_shared', PlaylistConstant::NOT_SHARED)
+        ->orderBy('p.order','ASC');
         $query = $qb->getQuery();
-        $query->useQueryCache(true);
-        return $query->getResult();
+
+
+        $playlistTracks =  $query->getResult();
+        $songs = [];
+        if($playlistTracks){
+            foreach($playlistTracks as $playlistTrack){
+                $songs[]=$playlistTrack->getSong();
+            }
+        }
+        return $songs;
     }
 
 
