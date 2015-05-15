@@ -67,7 +67,7 @@ class CacheManager extends AbstractManager{
                 return null;
             }
             catch(\Exception $ex){
-                $this->logger->err($ex->getMessage());
+                $this->logger->error($ex);
             }
         }
         return null;
@@ -102,7 +102,7 @@ class CacheManager extends AbstractManager{
             $this->em->persist($cacheResult);
             $this->em->flush();
         }catch (\Exception $ex){
-            $this->logger->err($ex->getMessage());
+            $this->logger->error($ex);
         }
     }
 
@@ -130,7 +130,7 @@ class CacheManager extends AbstractManager{
                 $this->em->persist($cacheResult);
                 $this->em->flush();
             }catch (\Exception $ex){
-                $this->logger->err($ex->getMessage());
+                $this->logger->error($ex);
             }
         }
 

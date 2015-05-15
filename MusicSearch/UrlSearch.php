@@ -67,7 +67,7 @@ class UrlSearch implements LoggerAwareInterface
                     return $result;
                 }
             } catch (\Exception $ex) {
-                $this->logger->err($ex->getMessage());
+                $this->logger->error($ex);
             }
         }
         return array();

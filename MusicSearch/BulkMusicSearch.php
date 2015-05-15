@@ -5,14 +5,24 @@ use Cogipix\CogimixCommonBundle\Model\SearchQuery;
 use Cogipix\CogimixCommonBundle\Model\BulkResult;
 use Cogipix\CogimixCommonBundle\Utils\LoggerAwareInterface;
 use Cogipix\CogimixCommonBundle\Comparator\CosineSimilarityComparator;
+use Psr\Log\LoggerInterface;
 
 class BulkMusicSearch implements LoggerAwareInterface
 {
 
+    /**
+     * @var MusicSearchInterface
+     */
     private $musicSearch;
 
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
+    /**
+     * @var CosineSimilarityComparator
+     */
     private $comparator;
 
     public function __construct(MusicSearchInterface $musicSearch)
@@ -48,7 +58,7 @@ class BulkMusicSearch implements LoggerAwareInterface
                     sleep($sleepTimeSeconds);
                 }
             } catch (\Exception $ex) {
-                $this->logger->err($ex->getMessage());
+                $this->logger->error($ex);
             }
         }
         return $results;
