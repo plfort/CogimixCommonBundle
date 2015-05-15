@@ -36,7 +36,7 @@ class PlaylistTrack
     /**
      * @JMSSerializer\Expose()
      * @JMSSerializer\Inline()
-     * @JMSSerializer\Groups({"playlist_detail"})
+     * @JMSSerializer\Groups({"playlist_detail","export"})
      * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\Song", inversedBy="playlistTracks",cascade={"persist"},fetch="EAGER")
      * @ORM\JoinColumn(name="song_id", referencedColumnName="id", nullable=FALSE)
      */
