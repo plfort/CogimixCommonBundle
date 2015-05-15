@@ -31,6 +31,10 @@ class BulkMusicSearch implements LoggerAwareInterface
         $this->comparator = new CosineSimilarityComparator();
     }
 
+    /**
+     * @param array $songQueries
+     * @return Song[]
+     */
     public function bulkSearchAndGuess(array $songQueries)
     {
 

@@ -116,7 +116,7 @@ class Song
 
     /**
      *
-     * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\PlaylistTrack",indexBy="order", mappedBy="song",cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\PlaylistTrack",indexBy="order", mappedBy="song",cascade={"persist"})
      * @var ArrayCollection
      */
     protected $playlistTracks;
@@ -129,12 +129,19 @@ class Song
      */
     protected $playedTracks;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\SuggestedTrack",mappedBy="song")
+     * @var
+     */
+    protected $suggestedTracks;
+
 
     public function __construct()
     {
         $this->pluginProperties = array();
         $this->playlistTracks = new ArrayCollection();
         $this->playedTracks = new ArrayCollection();
+        $this->suggestedTracks = new ArrayCollection();
     }
 
 
@@ -278,6 +285,9 @@ class Song
         return $this;
     }
 
+    /**
+     * @return ArrayCollection|PlaylistTrack[]
+     */
     public function getPlaylistTracks()
     {
         return $this->playlistTracks;
@@ -297,7 +307,7 @@ class Song
     }
 
     /**
-     * @return ArrayCollection
+     * @return ArrayCollection|PlayedTrack[]
      */
     public function getPlayedTracks()
     {
@@ -311,6 +321,23 @@ class Song
     {
         $this->playedTracks = $playedTracks;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getSuggestedTracks()
+    {
+        return $this->suggestedTracks;
+    }
+
+    /**
+     * @param mixed $suggestedTracks
+     */
+    public function setSuggestedTracks($suggestedTracks)
+    {
+        $this->suggestedTracks = $suggestedTracks;
+    }
+
 
 
 

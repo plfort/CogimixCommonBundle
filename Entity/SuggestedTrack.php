@@ -30,7 +30,7 @@ class SuggestedTrack extends SuggestedItem
     protected $result;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\Song")
+     * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\Song", inversedBy="suggestedTracks")
      * @var Song
      */
     protected $song;
