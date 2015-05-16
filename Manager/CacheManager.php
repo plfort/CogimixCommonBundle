@@ -1,6 +1,7 @@
 <?php
 namespace Cogipix\CogimixCommonBundle\Manager;
 
+use Cogipix\CogimixBundle\Util\StringUtils;
 use Cogipix\CogimixCommonBundle\Entity\CacheResults;
 
 use Doctrine\ORM\NoResultException;
@@ -21,13 +22,8 @@ class CacheManager extends AbstractManager{
 
     public function getFreshTagsForQuery($query,$serviceTags)
     {
-        $keywordList =  explode(' ',$query);
-        $keywordList = array_filter($keywordList,function($item){
-            return mb_strlen($item)>2;
-        });
-        $keywords = '+'.join(" +",$keywordList);
-        //$keywords = join(" ",$keywordList);
 
+        $keywords = StringUtils::fullTextMatchAll($query);
         $qb= $this->em->createQueryBuilder();
         $qb->select('DISTINCT(c.tag)')
             ->addSelect("MATCH_AGAINST(c.query, :keywords 'IN BOOLEAN MODE') as HIDDEN score")
@@ -36,9 +32,22 @@ class CacheManager extends AbstractManager{
             ->where("MATCH_AGAINST(c.query, :keywords 'IN BOOLEAN MODE') > 0 AND c.tag IN (:tags) AND c.expireDate > :now")
 
             ->orderBy('score','DESC')->orderBy('lengthRatio','ASC')
-            ->setParameters(array('query'=>$query, 'keywords'=>$keywords,'tags'=>$serviceTags,'now'=>new \DateTime()));
+            ->setParameter('query',$query,\PDO::PARAM_STR)
+            ->setParameter('keywords',$keywords,\PDO::PARAM_STR)
+            ->setParameter('tags',$serviceTags)
+            ->setParameter('now',new \DateTime());
+            //->setParameters(array('query'=>$query, 'keywords'=>$keywords,'tags'=>$serviceTags,'now'=>new \DateTime()));
         $query = $qb->getQuery();
         return array_column($query->getScalarResult(),1);
+    }
+
+    function fulltext_match_all($query)
+    {
+        $final = array();
+        foreach (array_filter(preg_split('/[\s\'-]+/', $query)) as $word) {
+            $final[] = "+$word";
+        }
+        return implode(' ', $final);
     }
 
     /**

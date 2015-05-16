@@ -32,8 +32,6 @@
 			<call method="setObjectManager">
 				<argument type="service" id="doctrine.orm.entity_manager" />
 			</call>
-
-	
 			<tag name="tokenstorage_aware" />
 			<tag name="logger_aware" />
 		</service>

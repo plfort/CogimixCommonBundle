@@ -1,6 +1,7 @@
 <?php
 namespace Cogipix\CogimixCommonBundle\Repository;
 
+use Cogipix\CogimixBundle\Util\StringUtils;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Cogipix\CogimixCommonBundle\Model\PlaylistConstant;
@@ -11,13 +12,8 @@ class SongRepository extends EntityRepository{
 
     public function findSongFullText(SearchQuery $query,$tag)
     {
-        $keywordList =  explode(' ',$query->getSongQuery());
-        $keywordList = array_filter($keywordList,function($item){
-          return mb_strlen($item)>2;
-        });
 
-        $keywords = '+'.join(" +",$keywordList);
-        //$keywords = join(" ",$keywordList);
+        $keywords = StringUtils::fullTextMatchAll($query->getSongQuery());
 
         return  $this->createQueryBuilder('s')
         ->addSelect("MATCH_AGAINST(s.title,s.artist, :keywords 'IN BOOLEAN MODE') as HIDDEN score")

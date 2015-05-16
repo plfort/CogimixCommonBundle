@@ -17,6 +17,8 @@ class SearchQuery
 
     protected $sort=true;
 
+    protected $useCache = true;
+
     public function __construct($songQuery = null, $artistQuery = '')
     {
         $this->songQuery = $songQuery;
@@ -68,6 +70,22 @@ class SearchQuery
     {
         $this->sort = $sort;
         return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isUseCache()
+    {
+        return $this->useCache;
+    }
+
+    /**
+     * @param boolean $useCache
+     */
+    public function setUseCache($useCache)
+    {
+        $this->useCache = $useCache;
     }
 
 

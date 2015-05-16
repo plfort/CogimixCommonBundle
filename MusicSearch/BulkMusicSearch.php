@@ -68,7 +68,7 @@ class BulkMusicSearch implements LoggerAwareInterface
         return $results;
     }
 
-    private function guessBestSong(SearchQuery $songQuery, $results)
+    public function guessBestSong(SearchQuery $songQuery, $results)
     {
         $shortest = - 1;
         $closest = null;
