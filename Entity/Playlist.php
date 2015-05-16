@@ -51,10 +51,6 @@ class Playlist
     /**
      * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\PlaylistTrack",indexBy="order", mappedBy="playlist",cascade={"persist","remove"})
      * @ORM\OrderBy({"order" = "ASC"})
-     * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"export","playlist_detail"})
-     * @JMSSerializer\SerializedName("tracks")
-     *
      *
      * @var ArrayCollection()
      */
@@ -418,7 +414,17 @@ class Playlist
         return $this;
     }
 
+    /**
+     * @JMSSerializer\VirtualProperty()
+     * @JMSSerializer\Groups({"export","playlist_detail"})
+     * @JMSSerializer\SerializedName("tracks")
+     * @return array
+     */
+   public function getTracks()
+    {
 
+       return array_values($this->playlistTracks->toArray());
+    }
 
 
 
