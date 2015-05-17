@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="playlist_track")
  * @ORM\Entity()
  * @JMSSerializer\AccessType("public_method")
- *
+ * @JMSSerializer\ExclusionPolicy("all")
  * @author plfort - Cogipix
  *
  */

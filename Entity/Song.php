@@ -144,7 +144,7 @@ class Song
      * @ORM\Column(type="integer",options={"default"=0})
      * @var integer
      */
-    protected $flag;
+    protected $flag = 0;
 
 
     public function __construct()
