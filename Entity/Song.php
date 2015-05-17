@@ -22,6 +22,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class Song
 {
+
+    const FLAG_NEED_CONVERT = '1';
+    const FLAG_IGNORE = '-1';
+
+
     use TimestampableEntity;
 
     /**
@@ -134,6 +139,12 @@ class Song
      * @var
      */
     protected $suggestedTracks;
+
+    /**
+     * @ORM\Column(type="integer",options={"default"=0})
+     * @var integer
+     */
+    protected $flag;
 
 
     public function __construct()
@@ -336,6 +347,22 @@ class Song
     public function setSuggestedTracks($suggestedTracks)
     {
         $this->suggestedTracks = $suggestedTracks;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFlag()
+    {
+        return $this->flag;
+    }
+
+    /**
+     * @param int $flag
+     */
+    public function setFlag($flag)
+    {
+        $this->flag = $flag;
     }
 
 
