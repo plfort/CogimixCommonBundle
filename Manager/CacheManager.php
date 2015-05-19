@@ -138,6 +138,7 @@ class CacheManager extends AbstractManager{
                 $cacheResult->setResults($this->serializer->serialize($results,'json'));
                 $this->em->persist($cacheResult);
                 $this->em->flush();
+                $this->em->detach($cacheResult);
             }catch (\Exception $ex){
                 $this->logger->error($ex);
             }
