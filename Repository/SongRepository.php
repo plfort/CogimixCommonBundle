@@ -90,5 +90,33 @@ class SongRepository extends EntityRepository{
         return $qb->getQuery()->getResult();
     }
 
+    public function getPopulareSongsQB()
+    {
+        return  $this->createQueryBuilder('s')
+            ->addSelect("COUNT(pt.id) AS HIDDEN playCount")
+            ->join('s.playedTracks','pt')
+            ->groupBy('s.id')
+
+            ->orderBy('playCount','DESC')
+            ->having('AVG(pt.playDuration) > 30');
+
+    }
+
+    public function getPopularSongsBetween($minDate,$maxDate = null,$limit=100){
+        if(!$maxDate){
+            $maxDate = new \DateTime();
+        }
+
+        $qb =  $this->getPopulareSongsQB()
+            ->where('pt.playDate BETWEEN :minDate AND :maxDate')
+            ->setParameter('minDate',$minDate)
+            ->setParameter('maxDate',$maxDate)
+            ->setMaxResults($limit);
+
+        $query = $qb->getQuery();
+        $query->useResultCache(true,3600,'popular_query_simple');
+        return $query->getResult();
+    }
+
 
 }
