@@ -95,6 +95,7 @@ class SongRepository extends EntityRepository{
         return  $this->createQueryBuilder('s')
             ->addSelect("COUNT(pt.id) AS HIDDEN playCount")
             ->join('s.playedTracks','pt')
+            ->andWhere('s.shareable = 1')
             ->groupBy('s.id')
 
             ->orderBy('playCount','DESC')
