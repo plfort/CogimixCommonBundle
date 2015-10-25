@@ -2,6 +2,8 @@
 namespace Cogipix\CogimixCommonBundle\Entity;
 use Cogipix\CogimixCommonBundle\Model\PlaylistConstant;
 
+use Cogipix\CogimixCommonBundle\Model\ShareableItem;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -18,7 +20,7 @@ use JMS\Serializer\Annotation\Inline;
  * @ORM\HasLifecycleCallbacks
  * @JMSSerializer\ExclusionPolicy("all")
  */
-class Playlist
+class Playlist implements ShareableItem
 {
 
     /**
@@ -61,6 +63,7 @@ class Playlist
      * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\User", inversedBy="playlists")
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"user_minimal","playlist_detail"})
+     * @var User
      */
     protected $user;
 
@@ -138,6 +141,19 @@ class Playlist
      */
     protected $importTask;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\Tag")
+     * @ORM\JoinTable(name="playlists_tags",
+     *      joinColumns={@ORM\JoinColumn(name="playlist_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="tag_id", referencedColumnName="id")}
+     *      )
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"playlist_list","playlist_detail"})
+     * @JMSSerializer\Type("array<Cogipix\CogimixCommonBundle\Entity\Tag>")
+     * @var Collection
+     */
+    protected $tags;
+
 
     public function __construct()
     {
@@ -179,11 +195,17 @@ class Playlist
 
     }
 
+    /**
+     * @return User
+     */
     public function getUser()
     {
         return $this->user;
     }
 
+    /**
+     * @param $user
+     */
     public function setUser($user)
     {
         $this->user = $user;
@@ -424,6 +446,33 @@ class Playlist
     {
 
        return array_values($this->playlistTracks->toArray());
+    }
+
+
+    public function getShareableItemName()
+    {
+        // TODO: Implement getShareableItemName() method.
+    }
+
+    public function getImage()
+    {
+        return $this->getUser()->getWebPicture();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param Collection $tags
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
     }
 
 

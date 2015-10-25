@@ -109,7 +109,7 @@ class SongRepository extends EntityRepository{
         }
 
         $qb =  $this->getPopulareSongsQB()
-            ->where('pt.playDate BETWEEN :minDate AND :maxDate')
+            ->andWhere('pt.playDate BETWEEN :minDate AND :maxDate')
             ->setParameter('minDate',$minDate)
             ->setParameter('maxDate',$maxDate)
             ->setMaxResults($limit);

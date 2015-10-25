@@ -39,7 +39,7 @@ class PlaylistRepository extends EntityRepository{
         ->leftJoin('playlistTracks.song','song');
         $qb->join('p.user','u');
         $qb->leftJoin('u.listeners','ml');
-        $qb->where('p.id = :id AND (u = :currentUser OR p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1))');
+        $qb->where('p.id = :id AND (song.id IS NULL OR song.shareable = true) AND (u = :currentUser OR p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1))');
         $qb->andWhere('u.id NOT IN (SELECT u2.id FROM CogimixCommonBundle:User u2 LEFT JOIN u2.myListenings listenings LEFT JOIN u2.listeners listeners WHERE  (listeners.fromUser = :currentUser AND listeners.accepted = 0) OR (listenings.toUser = :currentUser AND listenings.accepted = 0))');
 
         $qb->setParameter('id',$playlistId);
@@ -56,13 +56,54 @@ class PlaylistRepository extends EntityRepository{
         }
     }
 
+
+    public function searchByNameAndTags($currentUser,$name,$tags=[],$limit=30,$listenrId=null){
+        $qb= $this->createQueryBuilder('p');
+        $qb->select('distinct p,u')
+            ->join('p.user','u')
+
+            ->leftJoin('u.listeners','ml')
+            ->where('(p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1)) AND (p.name like :name) AND p.trackCount > 0');
+        if($currentUser != null){
+            $qb->andWhere('u.id NOT IN (SELECT u2.id FROM CogimixCommonBundle:User u2 LEFT JOIN u2.myListenings listenings LEFT JOIN u2.listeners listeners WHERE  (listeners.fromUser = :currentUser AND listeners.accepted = 0) OR (listenings.toUser = :currentUser AND listenings.accepted = 0))');
+        }
+
+        $qb->addSelect('tags');
+        $qb->leftJoin('p.tags','tags');
+
+        if(!empty($tags)){
+            $qb->leftJoin('p.tags','tagsFilter');
+            $qb->andWhere('tagsFilter.label IN (:tags)')
+                ->setParameter('tags',$tags);
+        }
+
+
+        if($listenrId != null){
+            $qb->andWhere('u.id = :listenerId');
+            $qb->setParameter('listenerId',$listenrId);
+        }
+        $qb->setParameter('name', '%'.$name.'%');
+        $qb->setParameter('currentUser',$currentUser);
+        if(!empty($limit)){
+            $qb->setMaxResults($limit);
+        }
+
+        $qb->addOrderBy('p.fanCount','DESC');
+        $qb->addOrderBy('p.updateDate','DESC');
+
+        $query=$qb->getQuery();
+        $query->useQueryCache(true);
+        //$query->useResultCache(true,600);
+        return $query->getResult();
+    }
+
     public function searchByName($currentUser,$name,$limit=30,$listenrId=null){
        $qb= $this->createQueryBuilder('p');
-       $qb->select('distinct p,u');
-
-       $qb->join('p.user','u');
-       $qb->leftJoin('u.listeners','ml');
-       $qb->where('(p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1)) AND (p.name like :name) AND p.trackCount > 0');
+       $qb->select('distinct p,u,tags')
+        ->join('p.user','u')
+       ->leftJoin('p.tags','tags')
+       ->leftJoin('u.listeners','ml')
+       ->where('(p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1)) AND (p.name like :name) AND p.trackCount > 0');
        if($currentUser != null){
            $qb->andWhere('u.id NOT IN (SELECT u2.id FROM CogimixCommonBundle:User u2 LEFT JOIN u2.myListenings listenings LEFT JOIN u2.listeners listeners WHERE  (listeners.fromUser = :currentUser AND listeners.accepted = 0) OR (listenings.toUser = :currentUser AND listenings.accepted = 0))');
        }

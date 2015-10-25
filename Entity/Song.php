@@ -1,6 +1,7 @@
 <?php
 namespace Cogipix\CogimixCommonBundle\Entity;
 
+use Cogipix\CogimixCommonBundle\Model\ShareableItem;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use JMS\Serializer\Annotation as JMSSerializer;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,7 +21,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @author plfort - Cogipix
  *
  */
-class Song
+class Song implements ShareableItem
 {
 
     const FLAG_NEED_CONVERT = '1';
@@ -99,13 +100,13 @@ class Song
      * @ORM\Column(type="boolean")
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"playlist_detail"})
-     * @var unknown_type
+     * @var boolean
      */
     protected $shareable = true;
 
     /**
      *
-     * @var unknown_type
+     * @var boolean
      */
     protected $oldShareableValue = null;
 
@@ -146,6 +147,19 @@ class Song
      */
     protected $flag = 0;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="favoriteSongs",indexBy="id")
+     **/
+    protected $fans;
+
+    /**
+     * @ORM\Column(type="integer",nullable=true)
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"playlist_detail"})
+     * @var int
+     */
+    protected $fanCount = 0;
+
 
     public function __construct()
     {
@@ -153,6 +167,7 @@ class Song
         $this->playlistTracks = new ArrayCollection();
         $this->playedTracks = new ArrayCollection();
         $this->suggestedTracks = new ArrayCollection();
+        $this->fans = new ArrayCollection();
     }
 
 
@@ -313,7 +328,6 @@ class Song
     public function addPlaylistTrack(PlaylistTrack $playlistTrack)
     {
         $playlistTrack->setSong($this);
-       // $this->playlistTracks->add($playlistTrack);
 
     }
 
@@ -365,7 +379,58 @@ class Song
         $this->flag = $flag;
     }
 
+    public function getFans()
+    {
+        return $this->fans;
+    }
+
+    public function setFans($fans)
+    {
+        $this->fans = $fans;
+    }
+
+    public function addFan($fan)
+    {
+        $this->fans[$fan->getId()] = $fan;
+        $this->incFanCount();
+    }
+
+    public function removeFan($fan)
+    {
+        if ($this->fans->containsKey($fan->getId())) {
+            $this->fans->remove($fan->getId());
+            $this->decFanCount();
+        }
+    }
+
+    public function getFanCount()
+    {
+        return $this->fanCount == null ? 0 : $this->fanCount;
+    }
+
+    public function setFanCount($fanCount)
+    {
+        $this->fanCount = $fanCount == null ? 0 : $fanCount;
+    }
+
+    public function incFanCount()
+    {
+        $this->fanCount++;
+    }
+
+    public function decFanCount()
+    {
+        $this->fanCount--;
+    }
 
 
+    public function getShareableItemName()
+    {
+        return $this->getArtistAndTitle();
+    }
 
+    public function getImage()
+    {
+        return $this->getThumbnails();
+    }
 }

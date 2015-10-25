@@ -61,6 +61,12 @@ class User extends BaseUser
     protected $favoritePlaylists;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Song",inversedBy="fans",indexBy="id")
+     * @ORM\JoinTable(name="fans_songs")
+     */
+    protected $favoriteSongs;
+
+    /**
      * @ORM\Column(type="integer");
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"user_info"})
@@ -91,7 +97,7 @@ class User extends BaseUser
     /**
      * @ORM\Column(type="string",nullable=true);
      * @JMSSerializer\Exclude()
-     * @var unknown_type
+     * @var string
      */
     private $shortDescription;
 
@@ -286,6 +292,27 @@ class User extends BaseUser
     }
 
 
+    public function getFavoriteSongs()
+    {
+        return $this->favoriteSongs;
+    }
 
+    public function setFavoriteSongs($favoriteSongs)
+    {
+        $this->favoriteSongs = $favoriteSongs;
+    }
+
+    public function addFavoriteSong(Song $favoriteSong)
+    {
+        $favoriteSong->addFan($this);
+        $this->favoriteSongs[$favoriteSong->getId()] = $favoriteSong;
+    }
+
+    public function removeFavoriteSong($favoriteSong){
+        if($this->favoriteSongs->containsKey($favoriteSong->getId())){
+            $favoriteSong->removeFan($this);
+            $this->favoriteSongs->remove($favoriteSong->getId());
+        }
+    }
 
 }

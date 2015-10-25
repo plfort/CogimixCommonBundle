@@ -132,6 +132,7 @@ abstract class AbstractMusicSearch implements PluginInterface,
                 $this->stopWatch->start(self::SW_PLUGIN_EXECUTEQUERY);
             }
             $results = $this->executeQuery();
+
             if($this->stopWatch){
                 $this->stopWatch->stop(self::SW_PLUGIN_EXECUTEQUERY);
             }

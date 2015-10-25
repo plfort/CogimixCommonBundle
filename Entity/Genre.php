@@ -19,13 +19,18 @@ class Genre
 
     /**
      * @ORM\Column(type="string")
-     * @var unknown_type
+     * @var string
      */
     protected $name;
 
     /**
+     * @var
+     */
+    protected $tags;
+
+    /**
      * @ORM\Column(type="boolean")
-     * @var unknown
+     * @var boolean
      */
     protected $confirmed;
 

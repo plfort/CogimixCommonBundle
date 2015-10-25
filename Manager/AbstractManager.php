@@ -1,5 +1,6 @@
 <?php
 namespace Cogipix\CogimixCommonBundle\Manager;
+use Cogipix\CogimixCommonBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -44,6 +45,9 @@ abstract class AbstractManager implements LoggerAwareInterface,TokenStorageAware
         $this->tokenStorage=$tokenStorageInterface;
     }
 
+    /**
+     * @return User|null
+     */
     protected function getCurrentUser() {
         $user = $this->tokenStorage->getToken()->getUser();
         if ($user instanceof AdvancedUserInterface)

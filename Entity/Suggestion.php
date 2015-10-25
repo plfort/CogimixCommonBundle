@@ -1,15 +1,17 @@
 <?php
 namespace Cogipix\CogimixCommonBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use JMS\Serializer\Annotation as JMSSerializer;
 /**
  *
  * @author plfort - Cogipix
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Cogipix\CogimixCommonBundle\Repository\SuggestionRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class Suggestion
 {
+
     /**
      * @ORM\Id
      * @ORM\Column(name="id", type="integer", nullable=false)
@@ -37,9 +39,28 @@ class Suggestion
      */
 
     protected $createDate;
+
+    /**
+     * @ORM\Column(type="text",length=300,nullable=true)
+     * @var string
+     */
+    protected $originMessage;
+
+    /**
+     * @ORM\Column(type="text",length=300,nullable=true)
+     * @var string
+     */
+    protected $responseMessage;
+
+    /**
+     * @ORM\Column(type="boolean",options={"default"=false})
+     * @var boolean
+     */
+    protected $vote=false;
+
     /**
      * @ORM\Column(type="boolean")
-     * @var unknown_type
+     * @var boolean
      */
     protected $readed = false;
 
@@ -101,5 +122,55 @@ class Suggestion
     {
         $this->readed = $readed;
     }
+
+    /**
+     * @return string
+     */
+    public function getOriginMessage()
+    {
+        return $this->originMessage;
+    }
+
+    /**
+     * @param string $originMessage
+     */
+    public function setOriginMessage($originMessage)
+    {
+        $this->originMessage = $originMessage;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResponseMessage()
+    {
+        return $this->responseMessage;
+    }
+
+    /**
+     * @param string $responseMessage
+     */
+    public function setResponseMessage($responseMessage)
+    {
+        $this->responseMessage = $responseMessage;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isVote()
+    {
+        return $this->vote;
+    }
+
+    /**
+     * @param boolean $vote
+     */
+    public function setVote($vote)
+    {
+        $this->vote = $vote;
+    }
+
+
 
 }
