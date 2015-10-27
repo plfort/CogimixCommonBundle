@@ -148,7 +148,7 @@ class Song implements ShareableItem
     protected $flag = 0;
 
     /**
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="favoriteSongs",indexBy="id")
+     * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\UserLikeSong", mappedBy="song",indexBy="id")
      **/
     protected $fans;
 
@@ -389,19 +389,6 @@ class Song implements ShareableItem
         $this->fans = $fans;
     }
 
-    public function addFan($fan)
-    {
-        $this->fans[$fan->getId()] = $fan;
-        $this->incFanCount();
-    }
-
-    public function removeFan($fan)
-    {
-        if ($this->fans->containsKey($fan->getId())) {
-            $this->fans->remove($fan->getId());
-            $this->decFanCount();
-        }
-    }
 
     public function getFanCount()
     {

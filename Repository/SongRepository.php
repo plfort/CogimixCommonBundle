@@ -2,6 +2,8 @@
 namespace Cogipix\CogimixCommonBundle\Repository;
 
 use Cogipix\CogimixBundle\Util\StringUtils;
+use Cogipix\CogimixCommonBundle\Entity\Song;
+use Cogipix\CogimixCommonBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Cogipix\CogimixCommonBundle\Model\PlaylistConstant;
@@ -28,6 +30,30 @@ class SongRepository extends EntityRepository{
         ->getQuery()
         ->getResult();
 
+
+    }
+
+    public function getSongFans(Song $song)
+    {
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('u')
+            ->from('CogimixCommonBundle:User','u')
+            ->join('u.favoriteSongs','favoriteSongs',Join::WITH,'favoriteSongs.song = :songId')
+            ->setParameter('songId',$song->getId());
+
+        return $qb->getQuery()->getResult();
+
+    }
+
+    public function getUsersFavoriteSongs(User $user)
+    {
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('s')
+            ->from('CogimixCommonBundle:Song','s')
+            ->join('s.fans','userLikeSong',Join::WITH,'userLikeSong.user = :userId')
+            ->setParameter('userId',$user->getId());
+
+        return $qb->getQuery()->getResult();
 
     }
 

@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMSSerializer;
 use Cogipix\CogimixBundle\Entity\ImportPlaylistTask;
-use JMS\Serializer\Annotation\Inline;
 
 
 /**
@@ -118,6 +117,12 @@ class Playlist implements ShareableItem
      * @ORM\ManyToMany(targetEntity="User", mappedBy="favoritePlaylists",indexBy="id")
      **/
     private $fans;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\PlaylistFolder",inversedBy="playlists")
+     * @var
+     */
+    protected $playlistFolder;
 
     /**
      * @ORM\Column(type="integer")
@@ -474,6 +479,24 @@ class Playlist implements ShareableItem
     {
         $this->tags = $tags;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPlaylistFolder()
+    {
+        return $this->playlistFolder;
+    }
+
+    /**
+     * @param mixed $playlistFolder
+     */
+    public function setPlaylistFolder($playlistFolder)
+    {
+        $this->playlistFolder = $playlistFolder;
+    }
+
+
 
 
 

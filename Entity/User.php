@@ -53,6 +53,15 @@ class User extends BaseUser
      */
     protected $playlists;
 
+
+    /**
+     * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\PlaylistFolder",mappedBy="user")
+     * @Assert\Valid()
+     * @var Collection
+     */
+    protected $playlistFolders;
+
+
     /**
      * @ORM\ManyToMany(targetEntity="Playlist",inversedBy="fans",indexBy="id")
      * @ORM\JoinTable(name="fans_playlists")
@@ -61,8 +70,7 @@ class User extends BaseUser
     protected $favoritePlaylists;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Song",inversedBy="fans",indexBy="id")
-     * @ORM\JoinTable(name="fans_songs")
+     * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\UserLikeSong",mappedBy="user")
      */
     protected $favoriteSongs;
 
@@ -134,7 +142,7 @@ class User extends BaseUser
         $this->searchQueries = new ArrayCollection();
         $this->playedTracks = new ArrayCollection();
         $this->picture = new UserPicture();
-        // your own logic
+        $this->playlistFolders = new ArrayCollection();
     }
 
     public function getId()
@@ -302,17 +310,33 @@ class User extends BaseUser
         $this->favoriteSongs = $favoriteSongs;
     }
 
-    public function addFavoriteSong(Song $favoriteSong)
+    /**
+     * @return Collection
+     */
+    public function getPlaylistFolders()
     {
-        $favoriteSong->addFan($this);
-        $this->favoriteSongs[$favoriteSong->getId()] = $favoriteSong;
+        return $this->playlistFolders;
     }
 
-    public function removeFavoriteSong($favoriteSong){
-        if($this->favoriteSongs->containsKey($favoriteSong->getId())){
-            $favoriteSong->removeFan($this);
-            $this->favoriteSongs->remove($favoriteSong->getId());
-        }
+    /**
+     * @param Collection $playlistFolders
+     */
+    public function setPlaylistFolders($playlistFolders)
+    {
+        $this->playlistFolders = $playlistFolders;
     }
+
+    public function addPlaylistFolder($playlistFolder)
+    {
+        $this->playlistFolders->add($playlistFolder);
+        $playlistFolder->setUser($this);
+    }
+
+
+    public function removePlaylistFolder($playlistFolder)
+    {
+        $this->playlistFolders->removeElement($playlistFolder);
+    }
+
 
 }

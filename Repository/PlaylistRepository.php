@@ -2,6 +2,7 @@
 namespace Cogipix\CogimixCommonBundle\Repository;
 
 
+use Cogipix\CogimixCommonBundle\Entity\User;
 use Doctrine\ORM\NoResultException;
 
 use Doctrine\ORM\Query\Expr\Join;
@@ -16,6 +17,19 @@ use Doctrine\ORM\EntityRepository;
  */
 class PlaylistRepository extends EntityRepository{
 
+
+    public function getPlaylistFolders(User $user)
+    {
+        $qb = $this->_em->createQueryBuilder()
+            ->select('pf,p')
+            ->from('CogimixCommonBundle:PlaylistFolder','pf')
+            ->leftJoin('pf.playlists','p')
+            ->where('pf.user = :userId')
+            ->setParameter('userId',$user->getId());
+
+        return $qb->getQuery()->getResult();
+
+    }
 
     public function isPlaylistAlreadyInFavorite($currentUser, $playlist){
         $q=$this->_em->createQuery("SELECT 1 FROM CogimixCommonBundle:User u WHERE u=:currentUser AND :playlist MEMBER OF u.favoritePlaylists")
