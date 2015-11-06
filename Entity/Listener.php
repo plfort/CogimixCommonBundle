@@ -4,7 +4,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use JMS\Serializer\Annotation as JMSSerializer;
 /**
  * @ORM\Entity
  */
@@ -20,14 +20,14 @@ class Listener
     private $id;
 
     /**
-     *
+     * @JMSSerializer\Groups({"suggestion","suggestion_from"})
      * @ORM\ManyToOne(targetEntity="User", inversedBy="myListenings")
      * @ORM\JoinColumn(name="from_user_id", referencedColumnName="id")
      */
     protected $fromUser;
 
     /**
-     *
+     * @JMSSerializer\Groups({"suggestion","suggestion_to"})
      * @ORM\ManyToOne(targetEntity="User",inversedBy="listeners")
      * @ORM\JoinColumn(name="to_user_id", referencedColumnName="id")
      */

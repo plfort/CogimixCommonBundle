@@ -25,6 +25,7 @@ abstract class SuggestedItem
 
     /**
      * @ORM\Column(type="datetime")
+     * @JMSSerializer\Groups({"suggestion"})
      * @var unknown_type
      */
 

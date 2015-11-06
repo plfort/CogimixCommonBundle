@@ -22,7 +22,7 @@ class User extends BaseUser
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @JMSSerializer\ReadOnly()
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"user_info","user_minimal"})
+     * @JMSSerializer\Groups({"user_info","user_minimal","suggestion"})
      */
     protected $id;
 
@@ -33,7 +33,7 @@ class User extends BaseUser
      * @Assert\Length(min=4, max=20,minMessage="Username is too short", maxMessage="Username is too long", groups={"Registration","Profile"})
      * @Assert\Regex(pattern="/^\w*$/",message="error_alphanum", groups={"Registration","Profile"})
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"user_info","user_minimal"})
+     * @JMSSerializer\Groups({"user_info","user_minimal","suggestion"})
      */
     protected $username;
 
@@ -86,7 +86,7 @@ class User extends BaseUser
      * @ORM\OneToOne(targetEntity="UserPicture", inversedBy="user", cascade={"remove","persist"},fetch="EAGER")
      * @ORM\JoinColumn(name="picture_id", referencedColumnName="id")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"user_info"})
+     * @JMSSerializer\Groups({"user_info","suggestion"})
      */
     protected $picture;
 

@@ -40,7 +40,7 @@ class UserPicture
     /**
      *  @JMSSerializer\Expose()
      *  @JMSSerializer\Accessor(getter="getWebPath")
-     *  @JMSSerializer\Groups({"user_info","user_picture"})
+     *  @JMSSerializer\Groups({"user_info","user_picture","suggestion"})
      *  */
     protected $webPath;
 

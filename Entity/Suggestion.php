@@ -16,6 +16,7 @@ class Suggestion
      * @ORM\Id
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @JMSSerializer\Groups({"suggestion"})
      * @JMSSerializer\ReadOnly()
      */
     private $id;
@@ -24,12 +25,15 @@ class Suggestion
      *
      * @ORM\ManyToOne(targetEntity="Listener", inversedBy="suggestions")
      * @ORM\JoinColumn(name="listener_id", referencedColumnName="id")
+     * @JMSSerializer\Groups({"suggestion","suggestion_from","suggestion_to"})
      */
     protected $listener;
 
     /**
      * @ORM\ManyToOne(targetEntity="SuggestedItem", inversedBy="suggestions")
      * @ORM\JoinColumn(name="suggested_item_id", referencedColumnName="id")
+     * @JMSSerializer\Type("Cogipix\CogimixCommonBundle\Entity\SuggestedItem")
+     * @JMSSerializer\Groups({"suggestion"})
      */
     protected $suggestedItem;
 
@@ -42,24 +46,28 @@ class Suggestion
 
     /**
      * @ORM\Column(type="text",length=300,nullable=true)
+     * @JMSSerializer\Groups({"suggestion"})
      * @var string
      */
     protected $originMessage;
 
     /**
      * @ORM\Column(type="text",length=300,nullable=true)
+     * @JMSSerializer\Groups({"suggestion"})
      * @var string
      */
     protected $responseMessage;
 
     /**
      * @ORM\Column(type="boolean",options={"default"=false})
+     * @JMSSerializer\Groups({"suggestion"})
      * @var boolean
      */
     protected $vote=false;
 
     /**
      * @ORM\Column(type="boolean")
+     * @JMSSerializer\Groups({"suggestion"})
      * @var boolean
      */
     protected $readed = false;

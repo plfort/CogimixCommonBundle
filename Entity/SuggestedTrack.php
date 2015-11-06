@@ -30,6 +30,8 @@ class SuggestedTrack extends SuggestedItem
     protected $result;
 
     /**
+     * @JMSSerializer\Expose()
+     * @JMSSerializer\Groups({"suggestion"})
      * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\Song", inversedBy="suggestedTracks")
      * @var Song
      */

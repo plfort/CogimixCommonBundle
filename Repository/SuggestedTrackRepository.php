@@ -34,7 +34,7 @@ class SuggestedTrackRepository extends EntityRepository{
     
     public function getSuggestedTracksSent($currentUser){
         $qb= $this->_em->createQueryBuilder('t')
-        ->select('NEW Cogipix\CogimixCommonBundle\Entity\SongFromUser(song.id,song.artist,song.title,song.tag,song.entryId,song.thumbnails,song.icon,song.pluginProperties,song.shareable, song.duration,tu.username,tu.id,s.id,s.readed)')
+        ->select('t,s')
         ->from('CogimixCommonBundle:SuggestedTrack','t')
         ->join('t.suggestions','s')
         ->join('CogimixCommonBundle:Song','song',Join::WITH,'t.song = song')
@@ -55,10 +55,10 @@ class SuggestedTrackRepository extends EntityRepository{
     public function getSuggestedTracksToUser($toUser,$onlyUnread){
         $qb= $this->_em->createQueryBuilder()
 
-        ->select('NEW Cogipix\CogimixCommonBundle\Entity\SongFromUser(song.id,song.artist,song.title,song.tag,song.entryId,song.thumbnails,song.icon,song.pluginProperties,song.shareable, song.duration,u.username,u.id,s.id,s.readed)')
+        ->select('t,s,song')
         ->from('CogimixCommonBundle:SuggestedTrack','t')
         ->join('t.suggestions','s')
-        ->join('CogimixCommonBundle:Song','song',Join::WITH,'t.song = song')
+        ->join('t.song','song')
         ->join('s.listener','l')
         ->join('l.fromUser','u')
         ->andWhere('l.toUser = :toUser');

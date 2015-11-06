@@ -3,10 +3,12 @@ namespace Cogipix\CogimixCommonBundle\Repository;
 
 
 use Cogipix\CogimixCommonBundle\Entity\SuggestedItem;
+use Cogipix\CogimixCommonBundle\Entity\SuggestedTrack;
 use Cogipix\CogimixCommonBundle\Entity\User;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\VarDumper\VarDumper;
 
 
 /**
@@ -16,6 +18,80 @@ use Doctrine\ORM\EntityRepository;
  */
 class SuggestionRepository extends EntityRepository
 {
+
+
+    public function getUnreadSuggestedTracksCountToUser($toUser){
+        $qb= $this->createQueryBuilder('s');
+        $qb->select('COUNT(s)');
+        $qb->join('s.listener','l');
+        $qb->join('l.fromUser','u');
+        $qb->andWhere('l.toUser = :toUser');
+        $qb->setParameter('toUser', $toUser->getId());
+        $qb->andWhere('s.readed = 0');
+
+        $query=$qb->getQuery();
+        $query->useQueryCache(true);
+        return $query->getSingleScalarResult();
+    }
+
+    public function getReceivedSuggestions($currentUser,$onlyUnread = false){
+        $qb= $this->_em->createQueryBuilder('s')
+            ->select('s,si,l,u,tu')
+            ->from('CogimixCommonBundle:Suggestion','s')
+            ->join('s.suggestedItem','si')
+            ->join('s.listener','l');
+        $qb->join('l.fromUser','u');
+        $qb->join('l.toUser','tu',Join::WITH,'tu.id = :userId');
+        $qb->setParameter('userId', $currentUser->getId());
+        $qb->orderBy('s.createDate','DESC');
+        if($onlyUnread){
+            $qb->andWhere('s.readed = 0');
+        }
+        $query=$qb->getQuery();
+        $suggestions = $query->getResult();
+        if(empty($suggestions)){
+            return null;
+        }
+        $songSuggestion = [];
+        foreach($suggestions as $suggestion){
+            if($suggestion->getSuggestedItem() instanceof SuggestedTrack){
+                $songSuggestion[] = $suggestion->getSuggestedItem()->getId();
+            }
+        }
+        $this->_em->getRepository('CogimixCommonBundle:SuggestedTrack')->findById($songSuggestion);
+        return $suggestions;
+    }
+
+
+    public function getSentSuggestion($currentUser){
+        $qb= $this->_em->createQueryBuilder('s')
+            ->select('s,si,l,u,tu')
+            ->from('CogimixCommonBundle:Suggestion','s')
+            ->join('s.suggestedItem','si')
+            ->join('s.listener','l');
+        $qb->join('l.fromUser','u');
+        $qb->join('l.toUser','tu');
+        $qb->andWhere('u.id = :userId');
+        $qb->setParameter('userId', $currentUser->getId());
+        $qb->orderBy('s.createDate','DESC');
+        $query=$qb->getQuery();
+        $suggestions = $query->getResult();
+        if(empty($suggestions)){
+            return null;
+        }
+        $songSuggestion = [];
+        foreach($suggestions as $suggestion){
+            if($suggestion->getSuggestedItem() instanceof SuggestedTrack){
+                $songSuggestion[] = $suggestion->getSuggestedItem()->getId();
+            }
+        }
+        $this->_em->getRepository('CogimixCommonBundle:SuggestedTrack')->findById($songSuggestion);
+        return $suggestions;
+
+    }
+
+
+
 
 
     public function getAvailableListenerForSuggestion(User $currentUser, SuggestedItem $suggestedItem = null)
