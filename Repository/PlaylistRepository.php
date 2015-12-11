@@ -18,6 +18,18 @@ use Doctrine\ORM\EntityRepository;
 class PlaylistRepository extends EntityRepository{
 
 
+    public function getUserPlaylistWithTags(User $user){
+        $qb = $this->_em->createQueryBuilder()
+            ->select('p,tags')
+            ->from('CogimixCommonBundle:Playlist','p')
+            ->leftJoin('p.tags','tags')
+            ->where('p.user = :userId')
+            ->orderBy('p.name')
+            ->setParameter('userId',$user->getId());
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function getPlaylistFolders(User $user)
     {
         $qb = $this->_em->createQueryBuilder()
@@ -77,7 +89,7 @@ class PlaylistRepository extends EntityRepository{
             ->join('p.user','u')
 
             ->leftJoin('u.listeners','ml')
-            ->where('(p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1)) AND (p.name like :name) AND p.trackCount > 0');
+            ->where('(p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1) OR (p.shared = 0 and p.user = :currentUser  ) )  AND (p.name like :name) AND p.trackCount > 0');
         if($currentUser != null){
             $qb->andWhere('u.id NOT IN (SELECT u2.id FROM CogimixCommonBundle:User u2 LEFT JOIN u2.myListenings listenings LEFT JOIN u2.listeners listeners WHERE  (listeners.fromUser = :currentUser AND listeners.accepted = 0) OR (listenings.toUser = :currentUser AND listenings.accepted = 0))');
         }
@@ -102,8 +114,8 @@ class PlaylistRepository extends EntityRepository{
             $qb->setMaxResults($limit);
         }
 
-        $qb->addOrderBy('p.fanCount','DESC');
-        $qb->addOrderBy('p.updateDate','DESC');
+        //$qb->addOrderBy('p.fanCount','DESC');
+        $qb->addOrderBy('p.createDate','DESC');
 
         $query=$qb->getQuery();
         $query->useQueryCache(true);
@@ -131,8 +143,8 @@ class PlaylistRepository extends EntityRepository{
            $qb->setMaxResults($limit);
        }
 
-       $qb->addOrderBy('p.fanCount','DESC');
-       $qb->addOrderBy('p.updateDate','DESC');
+       //$qb->addOrderBy('p.fanCount','DESC');
+       $qb->addOrderBy('p.createDate','DESC');
 
        $query=$qb->getQuery();
        $query->useQueryCache(true);

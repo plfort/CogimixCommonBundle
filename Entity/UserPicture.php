@@ -1,6 +1,5 @@
 <?php
 namespace Cogipix\CogimixCommonBundle\Entity;
-use JMS\SecurityExtraBundle\Security\Util\String;
 
 use Cogipix\CogimixBundle\Services\Images\ImageHelper;
 
