@@ -35,7 +35,6 @@ class Tag {
 
     /**
      * @ORM\Column(type="string",length=20,unique=true)
-     * @JMSSerializer\ReadOnly()
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"playlist_list","playlist_detail"})
      * @var string
@@ -49,6 +48,7 @@ class Tag {
     {
         return $this->id;
     }
+
 
 
     /**

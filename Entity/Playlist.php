@@ -147,7 +147,7 @@ class Playlist implements ShareableItem
     protected $importTask;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\Tag")
+     * @ORM\ManyToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\Tag",cascade={"persist"})
      * @ORM\JoinTable(name="playlists_tags",
      *      joinColumns={@ORM\JoinColumn(name="playlist_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="tag_id", referencedColumnName="id")}
