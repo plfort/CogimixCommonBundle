@@ -13,11 +13,11 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * Class UserLikeSong
+ * Class UserLikePlaylist
  * @package Cogipix\CogimixCommonBundle\Entity
- * @ORM\Entity(readOnly=true,repositoryClass="Cogipix\CogimixCommonBundle\Repository\UserLikeSongRepository")
+ * @ORM\Entity(readOnly=true,repositoryClass="Cogipix\CogimixCommonBundle\Repository\UserLikePlaylistRepository")
  */
-class UserLikeSong {
+class UserLikePlaylist {
 
 
 
@@ -30,23 +30,28 @@ class UserLikeSong {
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\User",inversedBy="favoriteSongs")
+     * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\User",inversedBy="favoritePlaylists")
      * @var User
      */
     protected $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\Song",inversedBy="fans")
-     * @var
+     * @ORM\ManyToOne(targetEntity="Cogipix\CogimixCommonBundle\Entity\Playlist",inversedBy="fans")
+     * @var Playlist
      */
-    protected $song;
+    protected $playlist;
 
     /**
      * @var \DateTime
      * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime",nullable=true)
      */
     protected $createdAt;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+    }
 
     /**
      * @return int
@@ -74,20 +79,21 @@ class UserLikeSong {
     }
 
     /**
-     * @return mixed
+     * @return Playlist
      */
-    public function getSong()
+    public function getPlaylist()
     {
-        return $this->song;
+        return $this->playlist;
     }
 
     /**
-     * @param mixed $song
+     * @param mixed $playlist
      */
-    public function setSong($song)
+    public function setPlaylist($playlist)
     {
-        $this->song = $song;
+        $this->playlist = $playlist;
     }
+
 
     /**
      * @return \DateTime

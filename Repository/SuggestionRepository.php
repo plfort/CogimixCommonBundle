@@ -34,19 +34,29 @@ class SuggestionRepository extends EntityRepository
         return $query->getSingleScalarResult();
     }
 
-    public function getReceivedSuggestions($currentUser,$onlyUnread = false){
+    public function getReceivedSuggestions($currentUser,$orders=['createDate'=>'DESC'],$limit=50,$offset=0,$createdAfter = null){
         $qb= $this->_em->createQueryBuilder('s')
             ->select('s,si,l,u,tu')
             ->from('CogimixCommonBundle:Suggestion','s')
             ->join('s.suggestedItem','si')
-            ->join('s.listener','l');
-        $qb->join('l.fromUser','u');
-        $qb->join('l.toUser','tu',Join::WITH,'tu.id = :userId');
-        $qb->setParameter('userId', $currentUser->getId());
-        $qb->orderBy('s.createDate','DESC');
-        if($onlyUnread){
-            $qb->andWhere('s.readed = 0');
+            ->join('s.listener','l')
+            ->join('l.fromUser','u')
+            ->join('l.toUser','tu',Join::WITH,'tu.id = :userId')
+            ->setParameter('userId', $currentUser->getId())
+            ->setMaxResults($limit)
+            ->setFirstResult($offset);
+
+        if($createdAfter != null){
+            $qb->andWhere('s.createDate >= :createdAfter')
+                ->setParameter('createdAfter',$createdAfter);
         }
+
+
+
+        foreach($orders as $field=>$direction){
+            $qb->addOrderBy('s.'.$field,$direction);
+        }
+
         $query=$qb->getQuery();
         $suggestions = $query->getResult();
         if(empty($suggestions)){
@@ -62,8 +72,48 @@ class SuggestionRepository extends EntityRepository
         return $suggestions;
     }
 
+    public function getSentSuggestionWithResponse($currentUser,$orders=['respondedAt'=>'DESC'],$limit=50,$offset=0,$createdAfter = null){
+        $qb= $this->_em->createQueryBuilder('s')
+            ->select('s,si,l,u,tu')
+            ->from('CogimixCommonBundle:Suggestion','s')
+            ->join('s.suggestedItem','si')
+            ->join('s.listener','l');
+        $qb->join('l.fromUser','u',Join::WITH,'u.id = :userId');
+        $qb->join('l.toUser','tu');
+        $qb->andWhere('s.responseMessage IS NOT NULL');
+        $qb->setParameter('userId', $currentUser->getId())
+            ->setMaxResults($limit)
+            ->setFirstResult($offset);
 
-    public function getSentSuggestion($currentUser){
+        if($createdAfter != null){
+            $qb->andWhere('s.respondedAt >= :createdAfter')
+                ->setParameter('createdAfter',$createdAfter);
+        }
+
+        foreach($orders as $field=>$direction){
+            $qb->addOrderBy('s.'.$field,$direction);
+        }
+
+
+        $query=$qb->getQuery();
+        $suggestions = $query->getResult();
+        if(empty($suggestions)){
+            return null;
+        }
+        $songSuggestion = [];
+        foreach($suggestions as $suggestion){
+            if($suggestion->getSuggestedItem() instanceof SuggestedTrack){
+                $songSuggestion[] = $suggestion->getSuggestedItem()->getId();
+            }
+        }
+        $this->_em->getRepository('CogimixCommonBundle:SuggestedTrack')->findById($songSuggestion);
+        return $suggestions;
+
+    }
+
+
+
+    public function getSentSuggestion($currentUser,$orders=['createDate'=>'DESC'],$limit=50,$offset=0,$createdAfter = null){
         $qb= $this->_em->createQueryBuilder('s')
             ->select('s,si,l,u,tu')
             ->from('CogimixCommonBundle:Suggestion','s')
@@ -71,9 +121,21 @@ class SuggestionRepository extends EntityRepository
             ->join('s.listener','l');
         $qb->join('l.fromUser','u');
         $qb->join('l.toUser','tu');
-        $qb->andWhere('u.id = :userId');
-        $qb->setParameter('userId', $currentUser->getId());
-        $qb->orderBy('s.createDate','DESC');
+        $qb->andWhere('u.id = :userId AND s.responseMessage IS NULL');
+        $qb->setParameter('userId', $currentUser->getId())
+            ->setMaxResults($limit)
+            ->setFirstResult($offset);
+
+        if($createdAfter != null){
+            $qb->andWhere('s.createDate >= :createdAfter')
+                ->setParameter('createdAfter',$createdAfter);
+        }
+
+        foreach($orders as $field=>$direction){
+            $qb->addOrderBy('s.'.$field,$direction);
+        }
+
+
         $query=$qb->getQuery();
         $suggestions = $query->getResult();
         if(empty($suggestions)){

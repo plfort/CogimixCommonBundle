@@ -153,11 +153,12 @@ class PlaylistRepository extends EntityRepository{
     }
 
 
+
     public function getUserFavoritePlaylists($user)
     {
          $qb= $this->createQueryBuilder('p')
          ->addSelect('owner')
-         ->join('p.fans', 'fan',Join::WITH,'fan.id  = :userId')
+         ->join('p.fans', 'fan',Join::WITH,'fan.user  = :userId')
          ->join('p.user','owner')
          ->setParameter('userId', $user->getId());
 

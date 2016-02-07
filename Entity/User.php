@@ -63,8 +63,7 @@ class User extends BaseUser
 
 
     /**
-     * @ORM\ManyToMany(targetEntity="Playlist",inversedBy="fans",indexBy="id")
-     * @ORM\JoinTable(name="fans_playlists")
+     * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\UserLikePlaylist",mappedBy="user",indexBy="id")
      * @JMSSerializer\Groups({"user_favorite_playlists"})
      */
     protected $favoritePlaylists;
@@ -131,6 +130,12 @@ class User extends BaseUser
      * @var int
      */
     protected $facebookId;
+
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     * @var \DateTime
+     */
+    protected $lastNotificationDate;
 
     public function __construct()
     {
@@ -337,6 +342,24 @@ class User extends BaseUser
     {
         $this->playlistFolders->removeElement($playlistFolder);
     }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastNotificationDate()
+    {
+        return $this->lastNotificationDate;
+    }
+
+    /**
+     * @param \DateTime $lastNotificationDate
+     */
+    public function setLastNotificationDate($lastNotificationDate)
+    {
+        $this->lastNotificationDate = $lastNotificationDate;
+    }
+
+
 
 
 }

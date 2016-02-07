@@ -115,7 +115,7 @@ class AjaxResult {
 
     public function createResponse($serializer=null,$groups = array()){
 
-        return new Response($this->getJSON($serializer,$groups));
+        return new Response($this->getJSON($serializer,$groups),200,['Content-Type'=>'application/json']);
     }
 
 

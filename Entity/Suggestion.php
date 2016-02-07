@@ -16,7 +16,7 @@ class Suggestion
      * @ORM\Id
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @JMSSerializer\Groups({"suggestion"})
+     * @JMSSerializer\Groups({"suggestion","feed_list"})
      * @JMSSerializer\ReadOnly()
      */
     private $id;
@@ -25,7 +25,8 @@ class Suggestion
      *
      * @ORM\ManyToOne(targetEntity="Listener", inversedBy="suggestions")
      * @ORM\JoinColumn(name="listener_id", referencedColumnName="id")
-     * @JMSSerializer\Groups({"suggestion","suggestion_from","suggestion_to"})
+     * @JMSSerializer\Groups({"suggestion","suggestion_from","suggestion_to","feed_list"})
+     * @JMSSerializer\Type("Cogipix\CogimixCommonBundle\Entity\Listener")
      */
     protected $listener;
 
@@ -33,7 +34,7 @@ class Suggestion
      * @ORM\ManyToOne(targetEntity="SuggestedItem", inversedBy="suggestions")
      * @ORM\JoinColumn(name="suggested_item_id", referencedColumnName="id")
      * @JMSSerializer\Type("Cogipix\CogimixCommonBundle\Entity\SuggestedItem")
-     * @JMSSerializer\Groups({"suggestion"})
+     * @JMSSerializer\Groups({"suggestion","feed_list"})
      */
     protected $suggestedItem;
 
@@ -46,28 +47,35 @@ class Suggestion
 
     /**
      * @ORM\Column(type="text",length=300,nullable=true)
-     * @JMSSerializer\Groups({"suggestion"})
+     * @JMSSerializer\Groups({"suggestion","feed_list"})
      * @var string
      */
     protected $originMessage;
 
     /**
      * @ORM\Column(type="text",length=300,nullable=true)
-     * @JMSSerializer\Groups({"suggestion"})
+     * @JMSSerializer\Groups({"suggestion","feed_list"})
      * @var string
      */
     protected $responseMessage;
 
     /**
+     * @ORM\Column(type="datetime",nullable=true)
+     *
+     * @var \DateTime
+     */
+    protected $respondedAt;
+
+    /**
      * @ORM\Column(type="boolean",options={"default"=false})
-     * @JMSSerializer\Groups({"suggestion"})
+     *
      * @var boolean
      */
     protected $vote=false;
 
     /**
      * @ORM\Column(type="boolean")
-     * @JMSSerializer\Groups({"suggestion"})
+     * @JMSSerializer\Groups({"suggestion","feed_list"})
      * @var boolean
      */
     protected $readed = false;
@@ -82,6 +90,9 @@ class Suggestion
         $this->id = $id;
     }
 
+    /**
+     * @return Listener
+     */
     public function getListener()
     {
         return $this->listener;
@@ -178,6 +189,23 @@ class Suggestion
     {
         $this->vote = $vote;
     }
+
+    /**
+     * @return \DateTime
+     */
+    public function getRespondedAt()
+    {
+        return $this->respondedAt;
+    }
+
+    /**
+     * @param \DateTime $respondedAt
+     */
+    public function setRespondedAt($respondedAt)
+    {
+        $this->respondedAt = $respondedAt;
+    }
+
 
 
 

@@ -131,4 +131,15 @@ class UserRepository extends EntityRepository{
         return $query->getResult();
     }
 
+
+    public function getPlaylistsFans($playlist)
+    {
+        $qb= $this->createQueryBuilder('u')
+            ->join('u.favoritePlaylists', 'favoritePlaylists',Join::WITH,'favoritePlaylists.playlist  = :playlistId')
+            ->setParameter('playlistId', $playlist->getId());
+
+        $query=$qb->getQuery();
+        return $query->getResult();
+    }
+
 }

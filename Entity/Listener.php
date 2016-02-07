@@ -20,14 +20,14 @@ class Listener
     private $id;
 
     /**
-     * @JMSSerializer\Groups({"suggestion","suggestion_from"})
+     * @JMSSerializer\Groups({"suggestion","suggestion_from","feed_list"})
      * @ORM\ManyToOne(targetEntity="User", inversedBy="myListenings")
      * @ORM\JoinColumn(name="from_user_id", referencedColumnName="id")
      */
     protected $fromUser;
 
     /**
-     * @JMSSerializer\Groups({"suggestion","suggestion_to"})
+     * @JMSSerializer\Groups({"suggestion","suggestion_to","feed_list"})
      * @ORM\ManyToOne(targetEntity="User",inversedBy="listeners")
      * @ORM\JoinColumn(name="to_user_id", referencedColumnName="id")
      */
@@ -35,7 +35,7 @@ class Listener
 
     /**
      * @ORM\Column(type="boolean")
-     * @var unknown_type
+     * @var boolean
      */
     protected $accepted = true;
 
@@ -46,10 +46,17 @@ class Listener
      */
     protected $suggestions;
 
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     * @var \DateTime
+     */
+    protected $createdAt;
+
     public function __construct()
     {
 
         $this->suggestions = new ArrayCollection();
+        $this->createdAt = new \DateTime();
 
     }
 
@@ -63,11 +70,17 @@ class Listener
         return $this->fromUser;
     }
 
+    /**
+     * @param $fromUser
+     */
     public function setFromUser($fromUser)
     {
         $this->fromUser = $fromUser;
     }
 
+    /**
+     * @return mixed
+     */
     public function getToUser()
     {
         return $this->toUser;
@@ -103,5 +116,23 @@ class Listener
     {
         $this->suggestions = $suggestions;
     }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
+
+
 
 }

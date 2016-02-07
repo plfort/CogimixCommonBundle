@@ -38,21 +38,21 @@ class Song implements ShareableItem
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"playlist_detail","suggestion"})
+     * @JMSSerializer\Groups({"song_detail","playlist_detail","suggestion"})
      */
     protected $id;
 
     /**
      * @ORM\Column(type="string")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"export","playlist_detail","suggestion"})
+     * @JMSSerializer\Groups({"song_detail","export","playlist_detail","suggestion"})
      * @var unknown_type
      */
     protected $title;
     /**
      * @ORM\Column(type="string")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"export","playlist_detail","suggestion"})
+     * @JMSSerializer\Groups({"song_detail","export","playlist_detail","suggestion"})
      * @var unknown_type
      */
     protected $artist = '';
@@ -61,7 +61,7 @@ class Song implements ShareableItem
      * @ORM\Column(type="string")
      * @JMSSerializer\Expose()
      * @JMSSerializer\SerializedName("entryId")
-     * @JMSSerializer\Groups({"export","playlist_detail","suggestion"})
+     * @JMSSerializer\Groups({"song_detail","export","playlist_detail","suggestion"})
      * @var unknown_type
      */
     protected $entryId;
@@ -69,7 +69,7 @@ class Song implements ShareableItem
     /**
      * @ORM\Column(type="string")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"export","playlist_detail","suggestion"})
+     * @JMSSerializer\Groups({"song_detail","export","playlist_detail","suggestion"})
      * @var unknown_type
      */
     protected $tag;
@@ -79,7 +79,7 @@ class Song implements ShareableItem
      * @ORM\Column(type="array")
      * @JMSSerializer\Expose()
      * @JMSSerializer\SerializedName("pluginProperties")
-     * @JMSSerializer\Groups({"playlist_detail","suggestion"})
+     * @JMSSerializer\Groups({"song_detail","playlist_detail","suggestion"})
      * @var array $pluginProperties
      */
     protected $pluginProperties;
@@ -87,7 +87,7 @@ class Song implements ShareableItem
     /**
      * @ORM\Column(type="string")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"export","playlist_detail","suggestion"})
+     * @JMSSerializer\Groups({"song_detail","export","playlist_detail","suggestion"})
      * @var unknown_type
      */
     protected $thumbnails;
@@ -102,7 +102,7 @@ class Song implements ShareableItem
     /**
      * @ORM\Column(type="boolean")
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"playlist_detail","suggestion"})
+     * @JMSSerializer\Groups({"song_detail","playlist_detail","suggestion"})
      * @var boolean
      */
     protected $shareable = true;
@@ -119,7 +119,7 @@ class Song implements ShareableItem
      * @var int
      * @ORM\Column(name="duration", type="integer", nullable=false)
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"playlist_detail","suggestion"})
+     * @JMSSerializer\Groups({"song_detail","playlist_detail","suggestion"})
      */
     protected $duration = 180;
 
@@ -158,7 +158,7 @@ class Song implements ShareableItem
     /**
      * @ORM\Column(type="integer",nullable=true)
      * @JMSSerializer\Expose()
-     * @JMSSerializer\Groups({"playlist_detail","suggestion"})
+     * @JMSSerializer\Groups({"song_detail","playlist_detail","suggestion"})
      * @var int
      */
     protected $fanCount = 0;

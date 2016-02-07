@@ -114,7 +114,7 @@ class Playlist implements ShareableItem
     protected $oldSharedValue = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="favoritePlaylists",indexBy="id")
+     * @ORM\OneToMany(targetEntity="Cogipix\CogimixCommonBundle\Entity\UserLikePlaylist", mappedBy="playlist",indexBy="user")
      **/
     private $fans;
 
