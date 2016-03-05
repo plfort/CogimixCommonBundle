@@ -72,6 +72,31 @@ class SuggestionRepository extends EntityRepository
         return $suggestions;
     }
 
+    /**
+     * @param User $currentUser
+     * @return int|mixed
+     */
+    public function countUnreadSuggestions(User $currentUser)
+    {
+        $qb= $this->_em->createQueryBuilder('s')
+            ->select('count(s)')
+            ->from('CogimixCommonBundle:Suggestion','s')
+            ->join('s.suggestedItem','si')
+            ->join('s.listener','l')
+            ->leftJoin('l.fromUser','u')
+            ->leftJoin('l.toUser','tu')
+            ->andWhere('(tu.id = :userId AND s.createDate > :lastNotifDate) OR (u.id = :userId AND s.respondedAt > :lastNotifDate) ')
+            ->setParameter('userId',$currentUser->getId())
+            ->setParameter('lastNotifDate',$currentUser->getLastNotificationDate());
+        try{
+            return $qb->getQuery()->getSingleScalarResult();
+        }catch(\Exception $ex){
+            throw $ex;
+            return 0;
+        }
+
+    }
+
     public function getSentSuggestionWithResponse($currentUser,$orders=['respondedAt'=>'DESC'],$limit=50,$offset=0,$createdAfter = null){
         $qb= $this->_em->createQueryBuilder('s')
             ->select('s,si,l,u,tu')
