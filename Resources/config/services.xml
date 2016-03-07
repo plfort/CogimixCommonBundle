@@ -37,7 +37,10 @@
 		</service>
 		
 		<service id="cogimix.url_search" class="Cogipix\CogimixCommonBundle\MusicSearch\UrlSearch">
-		    	    <tag name="logger_aware" />
+            <argument type="service" id="cogimix.song_manager" />
+            <call method="setLogger">
+                <argument type="service" id="monolog.logger.urlSearch"/>
+            </call>
 		</service>
 		
 		

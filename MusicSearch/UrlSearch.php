@@ -1,5 +1,7 @@
 <?php
 namespace Cogipix\CogimixCommonBundle\MusicSearch;
+use Cogipix\CogimixBundle\Manager\SongManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Link;
 
 use Symfony\Component\DomCrawler\Crawler;
@@ -12,13 +14,33 @@ use Cogipix\CogimixCommonBundle\MusicSearch\UrlSearcherInterface;
 
 class UrlSearch implements LoggerAwareInterface
 {
+    /**
+     * @var
+     */
 
     private $urlSearchers;
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
+    /**
+     * @var array
+     */
     private $crawledUrls = array();
+
+    /**
+     * @var SongManager
+     */
+    protected $songManager;
+
+    public function __construct(SongManager $songManager)
+    {
+        $this->songManager = $songManager;
+    }
 
     public function searchByUrl($url, $crawlFallback = true)
     {
+        $this->logger->info("Search URL : ".$url);
         if (!in_array($url, $this->crawledUrls)) {
 
             try {
@@ -28,6 +50,10 @@ class UrlSearch implements LoggerAwareInterface
                 foreach ($this->urlSearchers as $urlSearcher) {
                     if (($result = $urlSearcher->searchByUrl($parsedUrl))
                             !== null) {
+                        $this->logger->info("Result found with : ".get_class($urlSearcher));
+                        if (!is_array($result)) {
+                            $result = array($result);
+                        }
                         return $result;
                     }
                 }
@@ -71,6 +97,12 @@ class UrlSearch implements LoggerAwareInterface
             }
         }
         return array();
+    }
+
+
+    public function searchSongsByUrl($url)
+    {
+        return $this->songManager->insertAndGetSongs($this->searchByUrl($url,true));
     }
 
     private function getSiteContent($url)
