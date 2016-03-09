@@ -23,6 +23,7 @@ class SearchQuery
     {
         $this->songQuery = $songQuery;
         $this->artistQuery = $artistQuery;
+        $this->services = [];
     }
 
     public function getArtistQuery()
