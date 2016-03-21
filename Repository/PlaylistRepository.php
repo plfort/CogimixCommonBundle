@@ -65,7 +65,7 @@ class PlaylistRepository extends EntityRepository{
         ->leftJoin('playlistTracks.song','song');
         $qb->join('p.user','u');
         $qb->leftJoin('u.listeners','ml');
-        $qb->where('p.id = :id AND (song.id IS NULL OR song.shareable = true) AND (u = :currentUser OR p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1))');
+        $qb->where('p.id = :id AND (song .id IS NULL OR song.shareable = true OR u = :currentUser) AND (u = :currentUser OR p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1))');
         $qb->andWhere('u.id NOT IN (SELECT u2.id FROM CogimixCommonBundle:User u2 LEFT JOIN u2.myListenings listenings LEFT JOIN u2.listeners listeners WHERE  (listeners.fromUser = :currentUser AND listeners.accepted = 0) OR (listenings.toUser = :currentUser AND listenings.accepted = 0))');
 
         $qb->setParameter('id',$playlistId);
