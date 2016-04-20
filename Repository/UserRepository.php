@@ -23,7 +23,7 @@ class UserRepository extends EntityRepository{
         $qb->select('u');
         $qb->addSelect('(CASE WHEN u IN (SELECT IDENTITY(ml.toUser) FROM CogimixCommonBundle:Listener ml WHERE ml.fromUser = :user) THEN 1 ELSE 0 END) as added');
         $qb->andWhere('u.id = :userId AND u.id != :user');
-        $qb->leftJoin('u.listeners','l',Join::WITH,'l.fromUser = :user AND l.accepted=1');
+        $qb->leftJoin('u.listeners','l',Join::WITH,'l.fromUser = :user AND l.accepted=true');
   
         $qb->setParameter('user', $currentUser->getId());
         $qb->setParameter('userId', $id);
@@ -59,7 +59,7 @@ class UserRepository extends EntityRepository{
        $qb->addSelect('(CASE WHEN u IN (SELECT IDENTITY(ml.toUser) FROM CogimixCommonBundle:Listener ml WHERE ml.fromUser = :user) THEN 1 ELSE 0 END) as added');
        $qb->where($qb->expr()->like('u.username',$qb->expr()->literal('%'.$username.'%')));
        $qb->andWhere('u.id != :user');
-       $qb->leftJoin('u.listeners','l',Join::WITH,'l.fromUser = :user  AND l.accepted=1');
+       $qb->leftJoin('u.listeners','l',Join::WITH,'l.fromUser = :user  AND l.accepted=true');
        $qb->setParameter('user', $currentUser->getId());
        $qb->setMaxResults($limit);
        $query=$qb->getQuery();
@@ -72,7 +72,7 @@ class UserRepository extends EntityRepository{
         $qb->select('u')
         ->addSelect('(CASE WHEN u IN (SELECT IDENTITY(ml.toUser) FROM CogimixCommonBundle:Listener ml WHERE ml.fromUser = :currentUser) THEN 1 ELSE 0 END) as added')
         ->join('u.myListenings','l',Join::WITH,'l.toUser = :user')
-        ->leftJoin('u.myListenings','ll',Join::WITH,'ll.toUser = :currentUser AND ll.accepted=1')
+        ->leftJoin('u.myListenings','ll',Join::WITH,'ll.toUser = :currentUser AND ll.accepted=true')
         ->setParameter('user', $user->getId())
         ->setParameter('currentUser', $currentUser->getId());
         $query=$qb->getQuery();
