@@ -18,7 +18,7 @@ class PlaylistTrack
     /**
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @JMSSerializer\SerializedName("playlist_track_id")
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"playlist_detail"})

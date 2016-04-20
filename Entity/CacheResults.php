@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="cache_results",
  * indexes={
  * @ORM\Index(name="search_query_idx", columns={"query", "tag"}),
- * @ORM\Index(name="query_fulltxt", columns={"query"},flags="fulltext")
  *
  * })
  * @ORM\Entity
@@ -19,7 +18,7 @@ class CacheResults
     /**
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 

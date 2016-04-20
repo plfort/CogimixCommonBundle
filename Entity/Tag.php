@@ -18,6 +18,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * Class Tag
  * @package Cogipix\CogimixCommonBundle\Entity
  * @ORM\Entity(repositoryClass="Cogipix\CogimixCommonBundle\Repository\TagRepository",readOnly=true)
+ * @ORM\Table(name="tag")
  */
 class Tag {
 

@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Class PlaylistFolder
  * @package Cogipix\CogimixCommonBundle\Entity
  * @ORM\Entity()
+ * @ORM\Table(name="playlistfolder")
  */
 class PlaylistFolder {
 

@@ -2,7 +2,7 @@
 namespace Cogipix\CogimixCommonBundle\Entity;
 
 use Cogipix\CogimixCommonBundle\Model\ShareableItem;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as JMSSerializer;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -12,7 +12,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Table(name="song",uniqueConstraints={@ORM\UniqueConstraint(name="song_unique",columns={"tag","entryId"})},
  *      indexes={
  * @ORM\Index(name="song_idx", columns={"tag","entryId"}),
- * @ORM\Index(name="song_fulltxt", columns={"artist","title"},flags="fulltext")
  * })
  * @JMSSerializer\AccessType("public_method")
  * @JMSSerializer\ExclusionPolicy("all")
@@ -31,16 +30,29 @@ class Song implements ShareableItem
     const FLAG_IGNORE = '-1';
 
 
-    use TimestampableEntity;
 
     /**
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"song_detail","playlist_detail","suggestion"})
      */
     protected $id;
+
+    /**
+     * @var \DateTime
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime",nullable=true)
+     */
+    protected $createdAt;
+
+    /**
+     * @var \DateTime
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime",nullable=true)
+     */
+    protected $updatedAt;
 
     /**
      * @ORM\Column(type="string")
@@ -423,4 +435,54 @@ class Song implements ShareableItem
     {
         return $this->getThumbnails();
     }
+
+    /**
+     * Sets createdAt.
+     *
+     * @param  \DateTime $createdAt
+     * @return $this
+     */
+    public function setCreatedAt(\DateTime $createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Returns createdAt.
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Sets updatedAt.
+     *
+     * @param  \DateTime $updatedAt
+     * @return $this
+     */
+    public function setUpdatedAt(\DateTime $updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Returns updatedAt.
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+
+
+
 }

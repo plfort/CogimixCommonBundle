@@ -5,6 +5,7 @@ use JMS\Serializer\Annotation as JMSSerializer;
 
 /**
  * @ORM\Entity
+ * @ORM\Table(name="searchquery")
  * @author plfort - Cogipix
  *
  */
@@ -14,7 +15,7 @@ class SearchQuery
     /**
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @var integer
      */
     protected $id;

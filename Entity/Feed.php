@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @package Cogipix\CogimixCommonBundle\Entity
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\Entity
+ * @ORM\Table(name="feed")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
  * @ORM\DiscriminatorMap({"new_listener" = "NewListenerFeed", "like_song" = "LikeSongFeed","like_playlist"="LikePlaylistFeed"})
  */

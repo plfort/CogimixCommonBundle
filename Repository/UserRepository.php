@@ -41,7 +41,7 @@ class UserRepository extends EntityRepository{
         $qb= $this->createQueryBuilder('u');
         $qb->select('u, RAND() as HIDDEN r');
         $qb->addSelect('(CASE WHEN u IN (SELECT IDENTITY(ml.toUser) FROM CogimixCommonBundle:Listener ml WHERE ml.fromUser = :user) THEN 1 ELSE 0 END) as added');
-        $qb->leftJoin('u.listeners','l',Join::WITH,'l.fromUser = :user AND l.accepted=1')
+        $qb->leftJoin('u.listeners','l',Join::WITH,'l.fromUser = :user AND l.accepted=true')
         ->andWhere('u.playlistCount > 0')
         ->setParameter('user', $currentUser->getId())
         ->setMaxResults($limit)
@@ -85,7 +85,7 @@ class UserRepository extends EntityRepository{
         $qb->select('u')
         ->addSelect('(CASE WHEN u IN (SELECT IDENTITY(ml.toUser) FROM CogimixCommonBundle:Listener ml WHERE ml.fromUser = :currentUser) THEN 1 ELSE 0 END) as added')
         ->join('u.listeners','l',Join::WITH,'l.fromUser = :user')
-        ->leftJoin('u.myListenings','ll',Join::WITH,'ll.toUser = :currentUser AND ll.accepted = 1')
+        ->leftJoin('u.myListenings','ll',Join::WITH,'ll.toUser = :currentUser AND ll.accepted = true')
         ->setParameter('user', $user->getId())
         ->setParameter('currentUser', $currentUser->getId());
         $query=$qb->getQuery();
@@ -103,7 +103,7 @@ class UserRepository extends EntityRepository{
         $qb->join('u.listeners','l',Join::WITH,'l.fromUser = :currentUser');
 
         $qb->setParameter('currentUser', $currentUser);
-        $qb->andWhere('l.accepted = 1');
+        $qb->andWhere('l.accepted = true');
         if(!empty($orderBy)){
             $qb->leftJoin('l.suggestions', 's')
                 ->addSelect('COUNT(s.id) AS HIDDEN shareCount')

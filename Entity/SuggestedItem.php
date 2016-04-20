@@ -11,6 +11,7 @@ use JMS\Serializer\Annotation as JMSSerializer;
  * @ORM\DiscriminatorColumn(name="type", type="string")
  * @ORM\DiscriminatorMap({"playlist" = "SuggestedPlaylist", "track" = "SuggestedTrack"})
  * @ORM\Entity
+ * @ORM\Table(name="suggesteditem")
  * @ORM\HasLifecycleCallbacks
  */
 abstract class SuggestedItem
@@ -18,7 +19,7 @@ abstract class SuggestedItem
     /**
      * @ORM\Id
      * @ORM\Column(name="id", type="integer", nullable=false)
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @JMSSerializer\ReadOnly()
      */
     private $id;

@@ -7,6 +7,7 @@ use JMS\Serializer\Annotation as JMSSerializer;
  *
  * @author plfort - Cogipix
  * @ORM\Entity(repositoryClass="Cogipix\CogimixCommonBundle\Repository\SuggestionRepository")
+ * @ORM\Table(name="suggestion")
  * @ORM\HasLifecycleCallbacks
  */
 class Suggestion
@@ -15,7 +16,7 @@ class Suggestion
     /**
      * @ORM\Id
      * @ORM\Column(name="id", type="integer", nullable=false)
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @JMSSerializer\Groups({"suggestion","feed_list"})
      * @JMSSerializer\ReadOnly()
      */

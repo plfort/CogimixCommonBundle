@@ -15,6 +15,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * Class UserLikeSong
  * @package Cogipix\CogimixCommonBundle\Entity
+ * @ORM\Table(name="userlikesong")
  * @ORM\Entity(readOnly=true,repositoryClass="Cogipix\CogimixCommonBundle\Repository\UserLikeSongRepository")
  */
 class UserLikeSong {

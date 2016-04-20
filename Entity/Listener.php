@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as JMSSerializer;
 /**
  * @ORM\Entity
+ * @ORM\Table(name="listener")
  */
 class Listener
 {
@@ -14,7 +15,7 @@ class Listener
     /**
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      *
      */
     private $id;

@@ -196,14 +196,14 @@ class SuggestionRepository extends EntityRepository
                 ->andWhere('suggestedItem.id = :suggestedItem')
                 ->join('suggestedItem.suggestions', 'suggestions2')
                 ->join('suggestions2.listener', 'l2')
-                ->andWhere('l2.fromUser = :currentUser AND l2.accepted = 1');
+                ->andWhere('l2.fromUser = :currentUser AND l2.accepted = true');
 
             $qb->andWhere('l NOT IN ('.$subQuery->getDQL().')');
             $qb->setParameter('suggestedItem', $suggestedItem);
 
         }
 
-        $qb->andWhere('l.fromUser = :currentUser AND l.accepted = 1')
+        $qb->andWhere('l.fromUser = :currentUser AND l.accepted = true')
             ->orderBy('shareCount', 'DESC')
             ->groupBy('l.id');
 

@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Class NewListenerFeed
  * @package Cogipix\CogimixCommonBundle\Entity
  * @ORM\Entity()
+ *
  */
 class NewListenerFeed extends Feed {
 

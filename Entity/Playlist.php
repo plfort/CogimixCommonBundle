@@ -16,6 +16,7 @@ use Cogipix\CogimixBundle\Entity\ImportPlaylistTask;
  * @author plfort - Cogipix
  * @JMSSerializer\AccessType("public_method")
  * @ORM\Entity(repositoryClass="Cogipix\CogimixCommonBundle\Repository\PlaylistRepository")
+ * @ORM\Table(name="playlist")
  * @ORM\HasLifecycleCallbacks
  * @JMSSerializer\ExclusionPolicy("all")
  */
@@ -25,7 +26,7 @@ class Playlist implements ShareableItem
     /**
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @JMSSerializer\ReadOnly()
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"playlist_list","playlist_detail"})

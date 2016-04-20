@@ -9,6 +9,7 @@ use JMS\Serializer\Annotation as JMSSerializer;
 /**
  * @ORM\Entity
  *@JMSSerializer\ExclusionPolicy("all")
+ * @ORM\Table(name="userpicture")
  *
  */
 class UserPicture

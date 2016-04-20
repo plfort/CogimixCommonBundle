@@ -55,8 +55,8 @@ class TagRepository extends EntityRepository {
             $term = sprintf('%%%s%%', $term);
         }
         $query = $this->findAllQB()
-            ->where('tag.label like :term')
-            ->setParameter('term', $term)
+            ->where('LOWER(tag.label) like :term')
+            ->setParameter('term', strtolower($term))
         ;
         if ($field) {
             $query->select(sprintf('tag.%s', $field));

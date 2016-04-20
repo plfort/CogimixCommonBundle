@@ -65,8 +65,8 @@ class PlaylistRepository extends EntityRepository{
         ->leftJoin('playlistTracks.song','song');
         $qb->join('p.user','u');
         $qb->leftJoin('u.listeners','ml');
-        $qb->where('p.id = :id AND (song .id IS NULL OR song.shareable = true OR u = :currentUser) AND (u = :currentUser OR p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1))');
-        $qb->andWhere('u.id NOT IN (SELECT u2.id FROM CogimixCommonBundle:User u2 LEFT JOIN u2.myListenings listenings LEFT JOIN u2.listeners listeners WHERE  (listeners.fromUser = :currentUser AND listeners.accepted = 0) OR (listenings.toUser = :currentUser AND listenings.accepted = 0))');
+        $qb->where('p.id = :id AND (song .id IS NULL OR song.shareable = true OR u = :currentUser) AND (u = :currentUser OR p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = true))');
+        $qb->andWhere('u.id NOT IN (SELECT u2.id FROM CogimixCommonBundle:User u2 LEFT JOIN u2.myListenings listenings LEFT JOIN u2.listeners listeners WHERE  (listeners.fromUser = :currentUser AND listeners.accepted = false) OR (listenings.toUser = :currentUser AND listenings.accepted = false))');
 
         $qb->setParameter('id',$playlistId);
         $qb->setParameter('currentUser',$currentUser);
@@ -89,9 +89,9 @@ class PlaylistRepository extends EntityRepository{
             ->join('p.user','u')
 
             ->leftJoin('u.listeners','ml')
-            ->where('(p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1) OR (p.shared = 0 and p.user = :currentUser  ) )  AND (p.name like :name) AND p.trackCount > 0');
+            ->where('(p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = true) OR (p.shared = 0 and p.user = :currentUser  ) )  AND (LOWER(p.name) like :name) AND p.trackCount > 0');
         if($currentUser != null){
-            $qb->andWhere('u.id NOT IN (SELECT u2.id FROM CogimixCommonBundle:User u2 LEFT JOIN u2.myListenings listenings LEFT JOIN u2.listeners listeners WHERE  (listeners.fromUser = :currentUser AND listeners.accepted = 0) OR (listenings.toUser = :currentUser AND listenings.accepted = 0))');
+            $qb->andWhere('u.id NOT IN (SELECT u2.id FROM CogimixCommonBundle:User u2 LEFT JOIN u2.myListenings listenings LEFT JOIN u2.listeners listeners WHERE  (listeners.fromUser = :currentUser AND listeners.accepted = false) OR (listenings.toUser = :currentUser AND listenings.accepted = false))');
         }
 
         $qb->addSelect('tags');
@@ -108,7 +108,7 @@ class PlaylistRepository extends EntityRepository{
             $qb->andWhere('u.id = :listenerId');
             $qb->setParameter('listenerId',$listenrId);
         }
-        $qb->setParameter('name', '%'.$name.'%');
+        $qb->setParameter('name', '%'.strtolower($name).'%');
         $qb->setParameter('currentUser',$currentUser);
         if(!empty($limit)){
             $qb->setMaxResults($limit);
@@ -129,15 +129,15 @@ class PlaylistRepository extends EntityRepository{
         ->join('p.user','u')
        ->leftJoin('p.tags','tags')
        ->leftJoin('u.listeners','ml')
-       ->where('(p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = 1)) AND (p.name like :name) AND p.trackCount > 0');
+       ->where('(p.shared = 1  OR (p.shared = 2 AND ml.fromUser = :currentUser AND ml.accepted = true)) AND (LOWER(p.name) like :name) AND p.trackCount > 0');
        if($currentUser != null){
-           $qb->andWhere('u.id NOT IN (SELECT u2.id FROM CogimixCommonBundle:User u2 LEFT JOIN u2.myListenings listenings LEFT JOIN u2.listeners listeners WHERE  (listeners.fromUser = :currentUser AND listeners.accepted = 0) OR (listenings.toUser = :currentUser AND listenings.accepted = 0))');
+           $qb->andWhere('u.id NOT IN (SELECT u2.id FROM CogimixCommonBundle:User u2 LEFT JOIN u2.myListenings listenings LEFT JOIN u2.listeners listeners WHERE  (listeners.fromUser = :currentUser AND listeners.accepted = false) OR (listenings.toUser = :currentUser AND listenings.accepted = false))');
        }
        if($listenrId != null){
            $qb->andWhere('u.id = :listenerId');
            $qb->setParameter('listenerId',$listenrId);
        }
-       $qb->setParameter('name', '%'.$name.'%');
+       $qb->setParameter('name', '%'.strtolower($name).'%');
        $qb->setParameter('currentUser',$currentUser);
        if(!empty($limit)){
            $qb->setMaxResults($limit);

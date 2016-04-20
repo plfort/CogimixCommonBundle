@@ -4,7 +4,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  *@ORM\Entity
  * @author plfort - Cogipix
- *
+ *@ORM\Table(name="playedtrack")
  */
 class PlayedTrack
 {
@@ -12,7 +12,7 @@ class PlayedTrack
     /**
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 

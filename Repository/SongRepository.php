@@ -8,11 +8,32 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Cogipix\CogimixCommonBundle\Model\PlaylistConstant;
 use Cogipix\CogimixCommonBundle\Model\SearchQuery;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
+use Symfony\Component\VarDumper\VarDumper;
 
 class SongRepository extends EntityRepository{
 
 
-    public function findSongFullText(SearchQuery $query,$tag)
+    public function findSongFullTextPg(SearchQuery $songQuery,$tag)
+    {
+
+        $rsm = new ResultSetMappingBuilder($this->_em);
+        $rsm->addRootEntityFromClassMetadata('CogimixCommonBundle:Song','s');
+        $query  = $this->_em->createNativeQuery("
+            SELECT s.*
+            FROM song s, to_tsquery('simple',?) as textquery
+            WHERE s.tssong @@ textquery AND s.tag = ?
+            ORDER BY ts_rank_cd(s.tssong,textquery) DESC
+            LIMIT 50
+        ",$rsm);
+        $query->setParameter(0,StringUtils::pgTsQueryOr($songQuery->getSongQuery()),\PDO::PARAM_STR);
+        $query->setParameter(1,$tag,\PDO::PARAM_STR);
+        return $query->getResult();
+
+
+    }
+
+    public function findSongFullTextMySql(SearchQuery $query,$tag)
     {
 
         $keywords = StringUtils::fullTextMatchAll($query->getSongQuery());
@@ -121,7 +142,7 @@ class SongRepository extends EntityRepository{
         return  $this->createQueryBuilder('s')
             ->addSelect("COUNT(DISTINCT pt.user) AS HIDDEN playCount")
             ->join('s.playedTracks','pt')
-            ->andWhere('s.shareable = 1')
+            ->andWhere('s.shareable = true')
             ->groupBy('s.id')
 
             ->orderBy('playCount','DESC')

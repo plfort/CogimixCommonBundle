@@ -12,6 +12,7 @@ use JMS\Serializer\Annotation as JMSSerializer;
  *
  * @ORM\Entity(repositoryClass="Cogipix\CogimixCommonBundle\Repository\UserRepository")
  * @JMSSerializer\ExclusionPolicy("all")
+ * @ORM\Table(name="users")
  */
 class User extends BaseUser
 {
@@ -19,7 +20,7 @@ class User extends BaseUser
     /**
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @JMSSerializer\ReadOnly()
      * @JMSSerializer\Expose()
      * @JMSSerializer\Groups({"user_info","user_minimal","suggestion"})

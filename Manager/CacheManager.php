@@ -4,9 +4,12 @@ namespace Cogipix\CogimixCommonBundle\Manager;
 use Cogipix\CogimixBundle\Util\StringUtils;
 use Cogipix\CogimixCommonBundle\Entity\CacheResults;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\NoResultException;
 
 use Cogipix\CogimixCommonBundle\Manager\AbstractManager;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
+use Symfony\Component\VarDumper\VarDumper;
 
 
 class CacheManager extends AbstractManager{
@@ -22,6 +25,23 @@ class CacheManager extends AbstractManager{
 
     public function getFreshTagsForQuery($query,$serviceTags)
     {
+        $rsm = new ResultSetMappingBuilder($this->em);
+        $rsm->addScalarResult('tag','tag');
+        $nativeQuery = $this->em->createNativeQuery("
+            SELECT DISTINCT(c.tag) as tag, ts_rank_cd(c.tssong,textquery,32 /* rank/(rank+1) */) AS rank
+            FROM cache_results c, to_tsquery('simple',?) as textquery
+            WHERE textquery @@ c.tssong AND c.tag IN (?) AND c.expireDate > NOW()
+            ORDER BY rank DESC
+        ",$rsm);
+        $nativeQuery->setParameter(1,StringUtils::pgTsQueryOr($query),\PDO::PARAM_STR);
+        $nativeQuery->setParameter(2,$serviceTags,Connection::PARAM_STR_ARRAY);
+        $tags = $nativeQuery->getResult();
+        if(!empty($tags)){
+            return array_map(function($item){
+                return $item['tag'];
+            },$tags);
+        }
+        return [];
 
         $keywords = StringUtils::fullTextMatchAll($query);
         $qb= $this->em->createQueryBuilder();
