@@ -205,7 +205,7 @@ class SuggestionRepository extends EntityRepository
 
         $qb->andWhere('l.fromUser = :currentUser AND l.accepted = true')
             ->orderBy('shareCount', 'DESC')
-            ->groupBy('l.id');
+            ->groupBy('l.id','listeningUser.id');
 
         $qb->setParameter('currentUser', $currentUser);
 
