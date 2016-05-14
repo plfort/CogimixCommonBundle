@@ -26,8 +26,8 @@ class SongRepository extends EntityRepository{
             ORDER BY ts_rank_cd(s.tssong,textquery) DESC
             LIMIT 50
         ",$rsm);
-        $query->setParameter(0,StringUtils::pgTsQueryOr($songQuery->getSongQuery()),\PDO::PARAM_STR);
-        $query->setParameter(1,$tag,\PDO::PARAM_STR);
+        $query->setParameter(1,StringUtils::pgTsQueryAnd($songQuery->getSongQuery()),\PDO::PARAM_STR);
+        $query->setParameter(2,$tag,\PDO::PARAM_STR);
         return $query->getResult();
 
 

@@ -33,7 +33,7 @@ class CacheManager extends AbstractManager{
             WHERE textquery @@ c.tssong AND c.tag IN (?) AND c.expireDate > NOW()
             ORDER BY rank DESC
         ",$rsm);
-        $nativeQuery->setParameter(1,StringUtils::pgTsQueryOr($query),\PDO::PARAM_STR);
+        $nativeQuery->setParameter(1,StringUtils::pgTsQueryAnd($query),\PDO::PARAM_STR);
         $nativeQuery->setParameter(2,$serviceTags,Connection::PARAM_STR_ARRAY);
         $tags = $nativeQuery->getResult();
         if(!empty($tags)){
