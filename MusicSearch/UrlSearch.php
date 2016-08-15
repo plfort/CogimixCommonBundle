@@ -78,14 +78,15 @@ class UrlSearch implements LoggerAwareInterface
                             $url = $parsedUrl->host . $url;
                         }
 
-                        $subresult = $this->searchByUrl($url, false);
+                        $subResults = $this->searchByUrl($url, false);
 
-                        if (null != $subresult) {
-                            if (!is_array($subresult)) {
-                                $subresult = array($subresult);
+                        if (null != $subResults) {
+                            if (!is_array($subResults)) {
+                                $subResults = array($subResults);
                             }
-
-                            $result = array_merge($subresult, $result);
+                            foreach($subResults as $subResult){
+                                $result[] = $subResult;
+                            }
                         }
                         $this->crawledUrls[] = $url;
                     }
@@ -102,8 +103,24 @@ class UrlSearch implements LoggerAwareInterface
 
     public function searchSongsByUrl($url)
     {
-        return $this->songManager->insertAndGetSongs($this->searchByUrl($url,true));
+        $results = $this->searchByUrl($url,true);
+
+        $songs = $this->songManager->insertAndGetSongs($results);
+
+        $sortedSongs = [];
+        foreach($results as $result){
+            foreach($songs as $key=>$song){
+                if($result->getTag() == $song->getTag() && $result->getEntryId() == $song->getEntryId()){
+                    $sortedSongs[] = $song;
+                    unset($songs[$key]);
+                    break;
+                }
+            }
+        }
+
+        return $sortedSongs;
     }
+
 
     private function getSiteContent($url)
     {
